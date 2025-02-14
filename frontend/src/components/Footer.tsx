@@ -2,8 +2,8 @@
 
 export default function Footer() {
     return (
-        <footer className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white p-2">
-            <p>&copy; 2024 Your Company. All rights reserved.</p>
+        <footer className="bg-white text-gray-800 dark:bg-black dark:text-white p-2 border-t border-gray-300 dark:border-gray-600">
+            <p>&copy; 2025 Tiger Shi</p>
         </footer>
     );
 }
