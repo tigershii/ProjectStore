@@ -12,26 +12,28 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-8xl relative right-0">
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search..."
-        className="w-full px-4 py-1 pr-12 rounded-full border-2 border-gray-300 focus:border-gray-400 focus:outline-none dark:bg-black dark:border-gray-600 dark:focus:border-gray-500 dark:text-white transition-colors"
-      />
-      <button
-        type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-      >
-        <Image
-          src="/search.svg"
-          alt="Search"
-          width={20}
-          height={20}
-          className="dark:invert"
+    <form onSubmit={handleSubmit} className="w-full min-w-[400px] max-w-2xl mx-auto">
+      <div className="relative">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search..."
+          className="w-full px-6 py-2 pr-12 rounded-2xl border-2 border-gray-300 focus:border-gray-400 focus:outline-none dark:bg-black dark:border-gray-600 dark:focus:border-gray-500 dark:text-white transition-colors text-base bg-white dark:bg-gray-400"
         />
-      </button>
+        <button
+          type="submit"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        >
+          <Image
+            src="/search.svg"
+            alt="Search"
+            width={20}
+            height={20}
+            className="dark:invert"
+          />
+        </button>
+      </div>
     </form>
   );
 }
