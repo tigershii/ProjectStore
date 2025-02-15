@@ -14,7 +14,7 @@ export default function ThemeToggle() {
         checked={isDarkMode}
         onChange={toggleTheme}
       />
-      <div className="relative w-12 h-6 dark:bg-gray-900 border-2 dark:border-gray-600 border-gray-300 border-0.5 bg-white-100 rounded-full">
+      <div className="relative w-12 h-6 dark:bg-black border-2 dark:border-gray-600 border-gray-300 border-0.5 bg-white rounded-full">
         <div
           className={`absolute h-4 w-4 rounded-full transition-all duration-300 ${
             isDarkMode 

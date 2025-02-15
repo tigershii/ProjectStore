@@ -12,11 +12,10 @@ export default function Header() {
     const router = useRouter();
 
     return (
-        <header className="grid grid-cols-8 gap-4 p-2 bg-white dark:bg-black justify-items-center text-lg border-b border-gray-300 dark:border-gray-600 dark:text-white">
+        <header className="grid grid-cols-8 gap-4 p-2 bg-white dark:bg-black justify-items-center text-lg border-b border-gray-300 dark:border-gray-600 text-black dark:text-white">
             <div className="flex items-center"> Home </div>
             <div className="flex items-center"> Category </div>
             <div className="col-span-3 flex items-center w-full"> <SearchBar /> </div>
-            <div className="flex items-center"> Cart </div>
             <div className="flex items-center"> 
                 {loggedIn ? 
                     <AccountMenu /> : 
@@ -28,7 +27,9 @@ export default function Header() {
                     </button>
                 } 
             </div>
+            <div className="flex items-center"> Cart </div>
             <div className="flex items-center"> <ThemeToggle /> </div>
+            
         </header>
     );
 }
