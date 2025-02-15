@@ -31,6 +31,7 @@ export function LoginForm({
               type="email"
               placeholder="m@example.com"
               required
+              className="dark:bg-primary-dark dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -43,9 +44,9 @@ export function LoginForm({
                 Forgot password?
               </a>
             </div>
-            <Input id="password" type="password" required />
+            <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full text-white dark:text-black">
             Login
           </Button>
           <Button variant="outline" className="w-full">
