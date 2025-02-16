@@ -4,11 +4,11 @@ import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
 import { useAppSelector } from "@/store/hooks";
 import { selectLoggedIn } from "@/store/reducers/authReducer";
-import AccountMenu from "./accountMenu";
-import CategoryMenu from "./categoryMenu";
-import CartMenu from "./cartMenu"; 
+import AccountMenu from "./AccountMenu";
+import CategoryMenu from "./CategoryMenu";
+import CartMenu from "./CartMenu"; 
 //import { useRouter } from "next/navigation";
-import { Card } from "./ui/card";
+import { Card } from "../ui/card";
 import Link from "next/link";
 export default function Header() {
     const loggedIn = useAppSelector(selectLoggedIn);
@@ -16,7 +16,7 @@ export default function Header() {
 
     return (
         <>
-            <Card className="container py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5 mx-5 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+            <Card className="container py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5 mx-5 bg-white dark:bg-secondary-dark text-gray-500 dark:text-gray-400 z-50">
                 <div className="flex items-center font-semibold text-black dark:text-white">
                     Project Store
                 </div>
@@ -36,18 +36,10 @@ export default function Header() {
                 <div className="flex items-center">
                     <ul className="flex items-center gap-10">
                         <li>
-                            <Link 
-                                href="/"
-                                className="hover:text-gray-600 dark:hover:text-gray-300"
-                            >
-                                My Orders
-                            </Link>
-                        </li>
-                        <li>
                             {loggedIn ? 
                             <AccountMenu /> : 
                             <Link 
-                                href="/loginPage"
+                                href={`/login`}
                                 className="hover:text-gray-600 dark:hover:text-gray-300"
                             >
                                 Login

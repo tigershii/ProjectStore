@@ -9,7 +9,7 @@ import {
   SheetTitle 
 } from "@/components/ui/sheet";
 import Image from "next/image";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 export default function CartMenu() {
   return (
@@ -20,7 +20,7 @@ export default function CartMenu() {
           alt="cart" 
           width={20} 
           height={20} 
-          className="brightness-0 opacity-50 dark:invert dark:opacity-40 hover:opacity-60 dark:hover:opacity-50"
+          className="brightness-0 opacity-50 dark:invert dark:opacity-60 hover:opacity-60 dark:hover:opacity-80"
         />
       </SheetTrigger>
       <SheetContent className="text-black dark:text-white dark:bg-primary-dark">

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 import scrollbar from "tailwind-scrollbar";
+import lineClamp from "@tailwindcss/line-clamp";
 
 export default {
   content: [
@@ -16,8 +17,12 @@ export default {
   			foreground: 'var(--foreground)',
   			primary: {
   				light: '#f7f7f8',
-  				dark: '#202020'
-  			}
+  				dark: '#000000'
+  			},
+			secondary: {
+				light: '#ffffff',
+				dark: '#1b1b1b'
+			}
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -29,5 +34,6 @@ export default {
   plugins: [
     animate,
     scrollbar({ nocompatible: true }),
+	lineClamp,
   ],
 } satisfies Config;
