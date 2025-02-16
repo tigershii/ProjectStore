@@ -1,18 +1,49 @@
-import Image from "next/image";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+"use client";
 
-export default function ImageCarousel() {
-    return (
-        <Carousel>
-            <CarouselContent>
-                {[...Array(10)].map((i) => (
-                    <CarouselItem key={i}>
-                        <Image src="/moon.svg" alt="moon" width={100} height={100} />
-                    </CarouselItem>
-                ))}
-            </CarouselContent>
-            <CarouselPrevious/>
-            <CarouselNext/>
-        </Carousel>
-    )
+import {useState, useEffect} from "react"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel"
+import Image from "next/image"
+export default function ImageCarousel({images} : {images: string[]}) {
+  const [api, setApi] = useState<CarouselApi>()
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap() + 1)
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1)
+    })
+  }, [api])
+
+  return (
+    <div className="mx-auto max-w-md">
+      <Carousel setApi={setApi} className="w-full max-w-md ">
+        <CarouselContent>
+          {images.map((url) => (
+            <CarouselItem key={url} className="flex aspect-square items-center justify-center p-6">
+              <Image src={url} alt="moon" width={1000} height={1000} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+      <div className="py-2 text-center text-sm text-muted-foreground dark:text-white ml-4">
+        Slide {current} of {count}
+      </div>
+    </div>
+  )
 }
