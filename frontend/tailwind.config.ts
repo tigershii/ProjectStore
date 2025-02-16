@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
+import scrollbar from "tailwind-scrollbar";
 
 export default {
   content: [
@@ -7,7 +8,7 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: ["class"],
+  darkMode: "class",
   theme: {
   	extend: {
   		colors: {
@@ -25,5 +26,8 @@ export default {
   		}
   	}
   },
-  plugins: [animate],
+  plugins: [
+    animate,
+    scrollbar({ nocompatible: true }),
+  ],
 } satisfies Config;

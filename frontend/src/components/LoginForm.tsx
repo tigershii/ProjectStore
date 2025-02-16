@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,11 +11,15 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { useAppDispatch } from "@/store/hooks";
+import { login } from "@/store/reducers/authReducer";
+import { useRouter } from "next/navigation";
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   return (
     <Card className={cn("w-full", className)} {...props}>
       <CardHeader className="space-y-1">
@@ -46,11 +52,8 @@ export function LoginForm({
             </div>
             <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" />
           </div>
-          <Button type="submit" className="w-full text-white dark:text-black">
+          <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {dispatch(login()); router.push('/')}}>
             Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
           </Button>
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}

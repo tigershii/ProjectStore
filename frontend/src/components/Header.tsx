@@ -5,13 +5,14 @@ import SearchBar from "./SearchBar";
 import { useAppSelector } from "@/store/hooks";
 import { selectLoggedIn } from "@/store/reducers/authReducer";
 import AccountMenu from "./accountMenu";
-import { useRouter } from "next/navigation";
+import CategoryMenu from "./categoryMenu";
+import CartMenu from "./cartMenu"; 
+//import { useRouter } from "next/navigation";
 import { Card } from "./ui/card";
 import Link from "next/link";
-
 export default function Header() {
     const loggedIn = useAppSelector(selectLoggedIn);
-    const router = useRouter();
+    //const router = useRouter();
 
     return (
         <>
@@ -22,10 +23,10 @@ export default function Header() {
 
                 <ul className="hidden md:flex items-center gap-10">
                     <li>
-                        <Link href="/" className="text-black dark:text-white">Home</Link> 
+                        <Link href="/">Home</Link> 
                     </li>
                     <li>
-                        <a href="#features">Category</a>
+                        <CategoryMenu />
                     </li>
                     <li>
                         <SearchBar />
@@ -35,20 +36,25 @@ export default function Header() {
                 <div className="flex items-center">
                     <ul className="flex items-center gap-10">
                         <li>
-                            <a href="#features">My Orders</a>
-                        </li>
-                        <li>
-                            Cart
+                            <Link 
+                                href="/"
+                                className="hover:text-gray-600 dark:hover:text-gray-300"
+                            >
+                                My Orders
+                            </Link>
                         </li>
                         <li>
                             {loggedIn ? 
                             <AccountMenu /> : 
-                            <button 
-                                onClick={() => router.push('/loginPage')}
+                            <Link 
+                                href="/loginPage"
                                 className="hover:text-gray-600 dark:hover:text-gray-300"
                             >
                                 Login
-                            </button>}
+                            </Link>}
+                        </li>
+                        <li>
+                            <CartMenu />
                         </li>
                         <li className="mt-1">
                             <ThemeToggle />
