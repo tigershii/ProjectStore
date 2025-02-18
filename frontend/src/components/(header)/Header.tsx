@@ -16,7 +16,7 @@ export default function Header() {
 
     return (
         <>
-            <Card className="container py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5 mx-5 bg-white dark:bg-secondary-dark text-gray-500 dark:text-gray-400 z-50">
+            <Card className="py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5 mx-5 bg-white dark:bg-secondary-dark text-gray-500 dark:text-gray-400 z-50">
                 <div className="flex items-center font-semibold text-black dark:text-white">
                     Project Store
                 </div>
