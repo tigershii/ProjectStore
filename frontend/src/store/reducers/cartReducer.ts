@@ -15,13 +15,7 @@ interface cartState {
 const initialState: cartState = {
     quantity: 0,
     totalPrice: 0,
-    items: [    {
-        id: '1',
-        title: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
-        price: 9.99,
-        description: "This is a mock item description. ",
-        images: ["/moon.svg", "/sun.svg", "/search.svg"]
-    }],
+    items: [],
     loading: 'idle',
     error: null,
 }

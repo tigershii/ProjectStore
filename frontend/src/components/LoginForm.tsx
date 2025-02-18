@@ -12,15 +12,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-import { selectLoggedIn } from "@/store/reducers/authReducer";
 import { useAuthActions } from "@/store/reducers/authReducer";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const isLoggedIn = useAppSelector(selectLoggedIn);
   const { login } = useAuthActions();
 
   const handleLogin = () => {

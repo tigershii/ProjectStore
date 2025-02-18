@@ -7,7 +7,8 @@ const mockItems: Item[] = [
         title: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
         price: 9.99,
         description: "This is a mock item description. ",
-        images: ["/moon.svg", "/sun.svg", "/search.svg"]
+        images: ["/moon.svg", "/sun.svg", "/search.svg"],
+        sellerId: "1"
     }
 ]
 
@@ -20,6 +21,7 @@ export default function ItemCardContainer() {
                 Item={mockItems[0]}
                 />
             ))}
+
         </div>
     )
 }
