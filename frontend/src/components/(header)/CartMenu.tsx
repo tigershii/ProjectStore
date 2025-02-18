@@ -6,12 +6,21 @@ import {
   SheetContent, 
   SheetHeader, 
   SheetFooter,
-  SheetTitle 
+  SheetTitle,
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { selectCartItems, selectCartQuantity, selectCartTotalPrice} from "@/store/reducers/cartReducer";
+import { selectLoggedIn } from "@/store/reducers/authReducer";
+import { useAppSelector } from "@/store/hooks";
+import ItemCardCart from "../(items)/itemCardCart";
 
 export default function CartMenu() {
+  const cartItems = useAppSelector(selectCartItems);
+  const cartQuantity = useAppSelector(selectCartQuantity);
+  const cartTotalPrice = useAppSelector(selectCartTotalPrice);
+  const isLoggedIn = useAppSelector(selectLoggedIn);
+
   return (
     <Sheet>
       <SheetTrigger className="mt-1">
@@ -28,19 +37,27 @@ export default function CartMenu() {
           <SheetHeader className="flex-none">
             <SheetTitle>Your Cart</SheetTitle>
           </SheetHeader>
-          <div className="flex-1 overflow-y-auto py-4 pr-0 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-            {/* Test content */}
-            {[...Array(20)].map((_, i) => (
-              <div key={i} className="mb-4 p-4 mr-4 border rounded">
-                Item {i + 1}
+          {isLoggedIn ? 
+            <div>
+              <div className="flex-1 overflow-y-auto py-4 pr-0 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                  {cartItems.map((item) => {
+                    return (
+                        <ItemCardCart key={item.id} item={item} />
+                    )
+                  })}
               </div>
-            ))}
-          </div>
-          <SheetFooter className="flex-none mt-2 mr-5">
-            <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {}}>
-              Checkout
-            </Button>
-          </SheetFooter>
+              <SheetFooter className="flex-none mt-2 flex flex-col">
+                <div className="mb-2 flex justify-between ml-3">
+                  <div>Total Items: {cartQuantity}</div>
+                  <div>Total Price: ${cartTotalPrice.toFixed(2)}</div>
+                </div>
+                <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {}}>
+                  Checkout
+                </Button>
+              </SheetFooter>
+            </div>
+          : 
+            <div className="text-center text-lg flex items-center justify-center h-full">Log in to view your cart</div>}
         </div>
       </SheetContent>
     </Sheet>

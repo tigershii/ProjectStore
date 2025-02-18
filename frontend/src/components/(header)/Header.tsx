@@ -11,7 +11,7 @@ import CartMenu from "./CartMenu";
 import { Card } from "../ui/card";
 import Link from "next/link";
 export default function Header() {
-    const loggedIn = useAppSelector(selectLoggedIn);
+    const isLoggedIn = useAppSelector(selectLoggedIn);
     //const router = useRouter();
 
     return (
@@ -36,7 +36,7 @@ export default function Header() {
                 <div className="flex items-center">
                     <ul className="flex items-center gap-10">
                         <li>
-                            {loggedIn ? 
+                            {isLoggedIn ? 
                             <AccountMenu /> : 
                             <Link 
                                 href={`/login`}

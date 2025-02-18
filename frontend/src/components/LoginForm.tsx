@@ -11,14 +11,23 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAppDispatch } from "@/store/hooks";
-import { login } from "@/store/reducers/authReducer";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectLoggedIn } from "@/store/reducers/authReducer";
+import { useAuthActions } from "@/store/reducers/authReducer";
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectLoggedIn);
+  const { login } = useAuthActions();
+
+  const handleLogin = () => {
+    login({username: 'test', password: 'test'});
+    router.push('/');
+  }
+
   const router = useRouter();
   return (
     <Card className={cn("w-full", className)} {...props}>
@@ -52,7 +61,7 @@ export function LoginForm({
             </div>
             <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" />
           </div>
-          <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {dispatch(login()); router.push('/')}}>
+          <Button type="submit" className="w-full text-white dark:text-black" onClick={handleLogin}>
             Login
           </Button>
           <div className="text-center text-sm">

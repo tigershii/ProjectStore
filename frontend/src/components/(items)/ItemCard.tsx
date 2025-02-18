@@ -1,15 +1,17 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { Item } from "@/types/item";
 
-export default function ItemCard({id, title, price, image} : {id: number, title: string, price: number, image: string}) {
+export default function ItemCard({Item} : {Item: Item}) {
+    const { id, title, price, images } = Item;
 
     return (
         <Link href={`/item/${id}`}>
             <Card className="overflow-hidden rounded-lg cursor-pointer bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-300">
                 <div className="aspect-square relative">
                     <Image 
-                        src={image}
+                        src={images[0]}
                         alt="Product" 
                         fill
                         className="object-cover"
