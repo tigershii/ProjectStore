@@ -8,7 +8,7 @@ export default function ItemCard({Item} : {Item: Item}) {
 
     return (
         <Link href={`/item/${id}`}>
-            <Card className="overflow-hidden rounded-lg cursor-pointer bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-300">
+            <Card className="overflow-hidden rounded-lg cursor-pointer bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-300 w=full">
                 <div className="aspect-square relative">
                     <Image 
                         src={images[0]}
