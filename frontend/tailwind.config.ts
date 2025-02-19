@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 import scrollbar from "tailwind-scrollbar";
-import lineClamp from "@tailwindcss/line-clamp";
 
 export default {
   content: [
@@ -34,6 +33,5 @@ export default {
   plugins: [
     animate,
     scrollbar({ nocompatible: true }),
-	lineClamp,
   ],
 } satisfies Config;

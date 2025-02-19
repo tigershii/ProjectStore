@@ -9,7 +9,8 @@ interface Props {
 }
 
 export default async function Home({ searchParams }: Props) {
-  const page = Number(searchParams.page) || 1;
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
   const { items, totalItems } = await getItems(page);
   const totalPages = Math.ceil(totalItems / 16)
 
