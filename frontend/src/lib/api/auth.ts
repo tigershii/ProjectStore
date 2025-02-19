@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const login = createAsyncThunk('auth/login', async (credentials: { username: string, password: string }) => {
-    const response = await fetch('/api/login', {
+    const response = await fetch('api/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -12,11 +12,12 @@ export const login = createAsyncThunk('auth/login', async (credentials: { userna
         throw new Error('Invalid credentials');
     }
     const data = await response.json();
+    console.log(data);
     return data.user;
 })
 
 export const signup = createAsyncThunk('auth/signup', async (credentials: { username: string, password: string }) => {
-    const response = await fetch('/api/signup', {
+    const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

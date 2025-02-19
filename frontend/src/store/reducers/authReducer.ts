@@ -35,7 +35,7 @@ const authSlice = createSlice({
         })
         builder.addCase(signup.rejected, (state, action) => {
             state.loading = 'failed';
-            state.isLoggedIn = true;
+            state.isLoggedIn = false;
             state.user = null;
             state.error = action.error.message || 'An error occurred';
         })
@@ -51,7 +51,7 @@ const authSlice = createSlice({
         })
         builder.addCase(login.rejected, (state, action) => {
             state.loading = 'failed';
-            state.isLoggedIn = true;
+            state.isLoggedIn = false;
             state.user = null;
             state.error = action.error.message || 'An error occurred';
         })
@@ -77,6 +77,7 @@ export const useAuthActions = () => {
     return {
         login: (credentials: { username: string, password: string }) => dispatch(login(credentials)),
         logout: () => dispatch(logout()),
+        signup: (credentials: { username: string, password: string }) => dispatch(signup(credentials)),
     }
 }
 

@@ -21,10 +21,17 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [isSignup, setIsSignup] = useState(false);
-  const { login } = useAuthActions();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, signup } = useAuthActions();
 
   const handleSubmit = () => {
-    login({username: 'test', password: 'test'});
+    login({username: username, password: password});
+    router.push('/');
+  }
+
+  const handleSignup = () => {
+    signup({username: username, password: password});
     router.push('/');
   }
 
@@ -47,15 +54,17 @@ export function LoginForm({
               placeholder="m@example.com"
               required
               className="dark:bg-primary-dark dark:text-white"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="space-y-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
             </div>
-            <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" />
+            <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <Button type="submit" className="w-full text-white dark:text-black" onClick={handleSubmit}>
+          <Button type="submit" className="w-full text-white dark:text-black" onClick={isSignup ? handleSignup : handleSubmit}>
             {isSignup ? "Sign up" : "Log in"}
           </Button>
           <div className="text-center text-sm">
