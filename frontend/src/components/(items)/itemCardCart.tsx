@@ -6,8 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartActions } from "@/store/reducers/cartReducer";
 import { SheetClose } from "../ui/sheet";
+import { useAppSelector } from "@/store/hooks";
+import { selectUser } from "@/store/reducers/authReducer";
+
 export default function ItemCardCart({item} : {item: Item}) {
     const { removeItem } = useCartActions();
+    const userId = useAppSelector(selectUser)?.id || "";
 
     const { id, title, price, images } = item;
     return (
@@ -29,9 +33,12 @@ export default function ItemCardCart({item} : {item: Item}) {
                                 <div className="pl-4">
                                     <h1 className="text-md mb-2 text-black dark:text-white line-clamp-5">{title}</h1>
                                     <p className="text-md text-black dark:text-white">Price: ${price.toFixed(2)}</p>
-                                    <p onClick={() => removeItem(item.id)} className="w-full text-sm underline text-black dark:text-white py-2">
+                                    <button onClick={(e) => {
+                                        e.preventDefault(); // Prevent navigation
+                                        removeItem(userId, item.id);
+                                    }} className="w-full text-sm underline text-black dark:text-white py-2 text-left">
                                         Remove
-                                    </p>
+                                </button>
                                 </div>
                             </div>
                         </CardContent>

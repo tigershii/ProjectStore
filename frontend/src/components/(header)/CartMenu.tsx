@@ -7,6 +7,7 @@ import {
   SheetHeader, 
   SheetFooter,
   SheetTitle,
+  SheetClose,
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -14,12 +15,14 @@ import { selectCartItems, selectCartQuantity, selectCartTotalPrice} from "@/stor
 import { selectLoggedIn } from "@/store/reducers/authReducer";
 import { useAppSelector } from "@/store/hooks";
 import ItemCardCart from "../(items)/itemCardCart";
+import { useRouter } from "next/navigation";
 
 export default function CartMenu() {
   const cartItems = useAppSelector(selectCartItems);
   const cartQuantity = useAppSelector(selectCartQuantity);
   const cartTotalPrice = useAppSelector(selectCartTotalPrice);
   const isLoggedIn = useAppSelector(selectLoggedIn);
+  const router = useRouter();
 
   return (
     <Sheet>
@@ -51,9 +54,11 @@ export default function CartMenu() {
                   <div>Total Items: {cartQuantity}</div>
                   <div>Total Price: ${cartTotalPrice.toFixed(2)}</div>
                 </div>
-                <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {}}>
-                  Checkout
-                </Button>
+                <SheetClose asChild>
+                  <Button type="submit" className="w-full text-white dark:text-black" onClick={() => {router.push("/checkout")}}>
+                    Checkout
+                  </Button>
+                </SheetClose>
               </SheetFooter>
             </div>
           : 

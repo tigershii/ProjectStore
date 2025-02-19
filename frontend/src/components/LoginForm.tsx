@@ -13,14 +13,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
 import { useAuthActions } from "@/store/reducers/authReducer";
+import Link from "next/link";
+import { useState } from "react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [isSignup, setIsSignup] = useState(false);
   const { login } = useAuthActions();
 
-  const handleLogin = () => {
+  const handleSubmit = () => {
     login({username: 'test', password: 'test'});
     router.push('/');
   }
@@ -29,9 +32,9 @@ export function LoginForm({
   return (
     <Card className={cn("w-full", className)} {...props}>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Login</CardTitle>
+        <CardTitle className="text-2xl text-center">{isSignup ? "Sign Up" : "Login"}</CardTitle>
         <CardDescription className="text-center">
-          Enter your email below to login to your account
+          {isSignup ? "Enter your email below to sign up for an account" : "Enter your email below to login to your account"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -49,23 +52,17 @@ export function LoginForm({
           <div className="space-y-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <a
-                href="#"
-                className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-              >
-                Forgot password?
-              </a>
             </div>
             <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" />
           </div>
-          <Button type="submit" className="w-full text-white dark:text-black" onClick={handleLogin}>
-            Login
+          <Button type="submit" className="w-full text-white dark:text-black" onClick={handleSubmit}>
+            {isSignup ? "Sign up" : "Log in"}
           </Button>
           <div className="text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <a href="#" className="underline underline-offset-4 hover:text-primary">
-              Sign up
-            </a>
+            {isSignup ? "Already have an account?" : "Don't have an account?"} {" "}
+            <Link href="#" onClick={() => setIsSignup(!isSignup)} className="underline underline-offset-4 hover:text-primary">
+              {isSignup ? "Login" : "Sign up"}
+            </Link>
           </div>
         </form>
       </CardContent>

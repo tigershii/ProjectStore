@@ -1,8 +1,9 @@
 import { Item } from "@/types/item";
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
+import { fetchCart, addItem, removeItem } from "@/lib/api/cart";
 
 interface cartState {
     quantity: number;
@@ -15,45 +16,10 @@ interface cartState {
 const initialState: cartState = {
     quantity: 0,
     totalPrice: 0,
-    items: [],
+    items: [{id: "1", title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: "2", title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
     loading: 'idle',
     error: null,
 }
-
-export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
-    const response = await fetch('/api/cart');
-    if (!response.ok) {
-        throw new Error('Failed to fetch cart');
-    }
-    const data = await response.json();
-    return data;
-})
-
-export const addItem = createAsyncThunk('cart/addItem', async (itemId : string) => {
-    const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId }),
-    });
-    if (!response.ok) {
-        throw new Error('Failed to add item to cart');
-    }
-    const data = await response.json();
-    return data;
-})
-
-export const removeItem = createAsyncThunk('cart/removeItem', async (itemId : string) => {
-    const response = await fetch('/api/cart/remove?itemId=${itemId}', {
-        method: 'DELETE',
-    });
-    if (!response.ok) {
-        throw new Error('Failed to remove item from cart');
-    }
-    return itemId;
-})
-
 
 const cartSlice = createSlice({
     name: 'cart',
@@ -107,9 +73,9 @@ const cartSlice = createSlice({
 export const useCartActions = () => {
     const dispatch = useDispatch<AppDispatch>();
     return {
-        fetchCart: () => dispatch(fetchCart()),
-        addItem: (itemId: string) => dispatch(addItem(itemId)),
-        removeItem: (itemId: string) => dispatch(removeItem(itemId)),
+        fetchCart: (userId: string) => dispatch(fetchCart(userId)),
+        addItem: (userId: string, itemId: string) => dispatch(addItem({userId, itemId})),
+        removeItem: (userId: string, itemId: string) => dispatch(removeItem({userId, itemId})),
     }
 }
 

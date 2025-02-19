@@ -6,17 +6,21 @@ import { Item } from "@/types/item";
 import ImageCarousel from "@/components/(items)/ImageCarousel";
 import { useCartActions } from "@/store/reducers/cartReducer";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectUser } from "@/store/reducers/authReducer";
+
 export default function ItemBox({item} : {item: Item}) {
+    const userId = useAppSelector(selectUser)?.id || "";
     const { addItem } = useCartActions();
     const router = useRouter();
     const handleAddToCart = () => {
-        addItem(item.id);
+        addItem(userId, item.id);
         router.push('/');
     }
 
     return (
-        <div className="container mx-auto align-items">
-        <Card className="dark:bg-secondary-dark">
+        <div className="mx-auto flex items-center justify-center w-full">
+        <Card className="dark:bg-secondary-dark justify-center w-full mx-5 py-5">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:border-r md:border-gray-200 dark:md:border-gray-700 pr-8">

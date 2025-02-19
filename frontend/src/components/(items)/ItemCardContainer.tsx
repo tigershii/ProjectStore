@@ -1,17 +1,6 @@
 import ItemCard from "./ItemCard";
 import { Item } from "@/types/item";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink, PaginationEllipsis } from "@/components/ui/pagination";
-
-const mockItems: Item[] = [
-    {
-        id: '1',
-        title: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
-        price: 9.99,
-        description: "This is a mock item description. ",
-        images: ["/moon.svg", "/sun.svg", "/search.svg"],
-        sellerId: "1"
-    }
-]
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext} from "@/components/ui/pagination";
 
 export default function ItemCardContainer({ items, page, totalPages }: { items: Item[], page: number, totalPages: number }) {
     return (
@@ -24,18 +13,18 @@ export default function ItemCardContainer({ items, page, totalPages }: { items: 
                     />
                 ))}
             </div>
-            <Pagination className="">
+            <Pagination className="flex justify-center">
                 <PaginationContent>
                     {page > 1 ?
-                        <PaginationItem className="">
+                        <PaginationItem className="w-30">
                             <PaginationPrevious href={`/?page=${page - 1}`}/>
                         </PaginationItem>
                         : null}
-                <PaginationItem>
+                <PaginationItem className="w-30">
                     <div> {page} </div>
                 </PaginationItem>
                 {page < totalPages ? (
-                    <PaginationItem className="mr-6">
+                    <PaginationItem className="w-30">
                         <PaginationNext href={`/?page=${page + 1}`}/>
                     </PaginationItem>) 
                 : null}
