@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation";
 import { useAuthActions } from "@/store/reducers/authReducer";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from 'next/navigation'; // Change this import
+import { useEffect } from 'react'; // Add this import
 
 export function LoginForm({
   className,
@@ -23,19 +24,30 @@ export function LoginForm({
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const { login, signup } = useAuthActions();
-
-  const handleSubmit = () => {
-    login({username: username, password: password});
-    router.push('/');
-  }
-
-  const handleSignup = () => {
-    signup({username: username, password: password});
-    router.push('/');
-  }
-
   const router = useRouter();
+
+  const handleLogin = async(e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await login({username: username, password: password});
+    if (result.type === 'auth/login/fulfilled') {
+      router.push('/');
+    }
+    setUsername('');
+    setPassword('');
+  }
+
+  const handleSignup = async(e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await signup({username: username, password: password});
+    if (result.type === 'auth/signup/fulfilled') {
+      setIsSignup(false);
+    }
+    setUsername('');
+    setPassword('');
+  }
+
   return (
     <Card className={cn("w-full", className)} {...props}>
       <CardHeader className="space-y-1">
@@ -47,11 +59,10 @@ export function LoginForm({
       <CardContent>
         <form className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
+              id="username"
+              type="username"
               required
               className="dark:bg-primary-dark dark:text-white"
               value={username}
@@ -64,7 +75,7 @@ export function LoginForm({
             </div>
             <Input id="password" type="password" required className="dark:bg-primary-dark dark:text-white" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <Button type="submit" className="w-full text-white dark:text-black" onClick={isSignup ? handleSignup : handleSubmit}>
+          <Button type="submit" className="w-full text-white dark:text-black" onClick={isSignup ? handleSignup : handleLogin}>
             {isSignup ? "Sign up" : "Log in"}
           </Button>
           <div className="text-center text-sm">

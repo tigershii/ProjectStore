@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { login, logout, signup } from "@/lib/api/auth";
+import { login, logout, signup, verifySession } from "@/lib/api/auth";
 import { RootState, AppDispatch } from "../store";
 import { User } from "@/types/user";
 import { useDispatch } from "react-redux";
+
 interface AuthState {
     isLoggedIn: boolean;
     user: User | null;
@@ -29,7 +30,7 @@ const authSlice = createSlice({
         })
         builder.addCase(signup.fulfilled, (state, action: PayloadAction<User>) => {
             state.loading = 'succeeded';
-            state.isLoggedIn = true;
+            state.isLoggedIn = false;
             state.user = action.payload;
             state.error = null;
         })
@@ -69,6 +70,21 @@ const authSlice = createSlice({
             state.loading = 'failed';
             state.error = action.error.message || 'An error occurred';
         })
+        builder.addCase(verifySession.pending, (state) => {
+            state.loading = 'loading';
+        })
+        builder.addCase(verifySession.fulfilled, (state, action: PayloadAction<User>) => {
+            state.loading = 'succeeded';
+            state.isLoggedIn = true;
+            state.user = action.payload;
+            state.error = null;
+        })
+        builder.addCase(verifySession.rejected, (state) => {
+            state.loading = 'failed';
+            state.isLoggedIn = false;
+            state.user = null;
+            state.error = null; // No need to show error for session verification
+        });
     }
 })
 
@@ -78,6 +94,7 @@ export const useAuthActions = () => {
         login: (credentials: { username: string, password: string }) => dispatch(login(credentials)),
         logout: () => dispatch(logout()),
         signup: (credentials: { username: string, password: string }) => dispatch(signup(credentials)),
+        verifySession: () => dispatch(verifySession())
     }
 }
 

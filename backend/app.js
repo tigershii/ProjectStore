@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var dotenv = require('dotenv');
+
+dotenv.config()
+var port = process.env.PORT || 5000;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -16,10 +20,6 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
-
-
-
-port = 4000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
