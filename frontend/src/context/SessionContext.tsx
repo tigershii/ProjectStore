@@ -8,7 +8,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         verifySession();
-    }, []);
+    }, [verifySession]);
 
     return <>{children}</>;
 }

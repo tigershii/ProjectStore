@@ -13,8 +13,7 @@ router.get('/verifySession', authenticateToken, (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        const { password, ...userWithoutPassword } = user;
-        res.status(200).json(userWithoutPassword);
+        res.status(200).json({ message: 'Session verified', user: { id: user.userId, username: user.username } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Session verification failed' });
@@ -37,13 +36,14 @@ router.post('/signup', async (req, res) => {
 
         const newUser = {
             username,
-            password: hashedPassword
+            password: hashedPassword,
+            userId: users.length + 1
         };
         console.log(newUser);
 
        // await newUser.save();
-        users.push({username, password: hashedPassword, userId: users.length + 1});
-        res.status(201).json({ message: 'User registered successfully' });
+        users.push(newUser);
+        res.status(201).json({ message: 'User registered successfully', user: { id: newUser.userId, username: newUser.username } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Registration failed' });
@@ -78,7 +78,7 @@ router.post('/login', async(req, res) => {
             path: '/'
         });
 
-        res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful', user: { id: user.userId, username: user.username } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Login failed' });

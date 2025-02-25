@@ -25,7 +25,6 @@ export const login = createAsyncThunk('auth/login', async (credentials: { userna
         throw new Error('Invalid credentials');
     }
     const data = await response.json();
-    console.log(data);
     return data.user;
 })
 

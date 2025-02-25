@@ -8,9 +8,10 @@ Users (Auth)
 redis
 Cart - UserId : list of itemIds
 
-postgresql
-Items - itemId : itemId, title, price, description, images, sellerId, available, buyerId
+Items - itemId : itemId, title, price, description, images, sellerId, available, buyerId, views
 Categories - categoryId : categoryId, name
+Order - orderId : orderId, buyerId, sellerId, orderDate, totalAmount
+OrderItems - orderItemId : orderId, itemId, price
 
 Auth - userId : username, password, email
 
