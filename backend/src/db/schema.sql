@@ -11,9 +11,9 @@ CREATE TABLE items (
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     images TEXT[], -- Array of image URLs
-    seller_id INTEGER REFERENCES users(user_id),
+    seller_id VARCHAR(255) NOT NULL,
     available BOOLEAN DEFAULT true,
-    buyer_id INTEGER REFERENCES users(user_id),
+    buyer_id VARCHAR(255),
     views INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -32,8 +32,7 @@ CREATE TABLE item_categories (
 
 CREATE TABLE orders (
     order_id SERIAL PRIMARY KEY,
-    buyer_id INTEGER REFERENCES users(user_id),
-    seller_id INTEGER REFERENCES users(user_id),
+    buyer_id VARCHAR(255) NOT NULL,
     order_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(10,2) NOT NULL
 );

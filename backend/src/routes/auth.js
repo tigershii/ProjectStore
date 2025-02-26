@@ -3,11 +3,11 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const authenticateToken = require('../middleware/authMiddleware');
-
+const Users = require('../models/users');
 
 router.get('/verifySession', authenticateToken, async (req, res) => {
     try {
-        const user = await db.query('SELECT * FROM users WHERE user_id = $1', [req.user.userId]);
+        const user = await Users.findOne({ where: { userId: req.user.userId } });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -18,14 +18,24 @@ router.get('/verifySession', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/allUsers', async (req, res) => {
+    try {
+        const users = await Users.findAll();
+        res.status(200).json(users);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Failed to fetch users' });
+    }
+});
+
 // User is database, not implemented yet
 router.post('/signup', async (req, res) => {
     try {
         const { username, password} = req.body;
         //change later
-        const user = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+        const user = await Users.findOne({ where: { username } });
         console.log(user);
-        if (user !== undefined) {
+        if (user !== null) {
             return res.status(400).json({ message: 'Username already exists' });
         }
 
@@ -35,11 +45,10 @@ router.post('/signup', async (req, res) => {
         const newUser = {
             username,
             password: hashedPassword,
-            userId: users.length + 1
         };
 
        // await newUser.save();
-        await db.query('INSERT INTO users (username, password, user_id) VALUES ($1, $2, $3)', [newUser.username, newUser.password, newUser.userId]);
+        await Users.create(newUser);
         res.status(201).json({ message: 'User registered successfully', user: { id: newUser.userId, username: newUser.username } });
     } catch (error) {
         console.log(error);
@@ -51,7 +60,7 @@ router.post('/login', async(req, res) => {
     try {
         const { username, password} = req.body;
         //change later
-        const user = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+        const user = await Users.findOne({ where: { username } });
         console.log(user || "User not found");
         if (!user) {
             return res.status(400).json({ message: `Username doesn't exist` });

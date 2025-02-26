@@ -5,13 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 var dotenv = require('dotenv');
-const db = require('./config/db.config');
+var sequelize = require('./db');
+const { syncDatabase } = require('./db');
 
 dotenv.config()
 var port = process.env.PORT || 5000;
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var app = express();
 
@@ -32,10 +32,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors(corsOptions));
-
+app.get('/api/health', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.json({ status: 'Database connection successful' });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ status: 'Database connection failed', error: error.message });
+  }
+});
 app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -53,8 +61,19 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+async function initializeApp() {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connection established successfully.');
+    
+    await syncDatabase();
+    
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+initializeApp();
 
 module.exports = app;
