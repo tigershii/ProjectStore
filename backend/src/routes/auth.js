@@ -4,12 +4,10 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const authenticateToken = require('../middleware/authMiddleware');
 
-const users = [{username: 'test', password: 'test', userId: "1"}, {username: 'test2', password: 'test2', userId: "2"}];
 
-router.get('/verifySession', authenticateToken, (req, res) => {
+router.get('/verifySession', authenticateToken, async (req, res) => {
     try {
-
-        const user = users.find(user => user.userId === req.user.userId);
+        const user = await db.query('SELECT * FROM users WHERE user_id = $1', [req.user.userId]);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -25,7 +23,7 @@ router.post('/signup', async (req, res) => {
     try {
         const { username, password} = req.body;
         //change later
-        const user = users.find(user => user.username === username);
+        const user = await db.query('SELECT * FROM users WHERE username = $1', [username]);
         console.log(user);
         if (user !== undefined) {
             return res.status(400).json({ message: 'Username already exists' });
@@ -39,10 +37,9 @@ router.post('/signup', async (req, res) => {
             password: hashedPassword,
             userId: users.length + 1
         };
-        console.log(newUser);
 
        // await newUser.save();
-        users.push(newUser);
+        await db.query('INSERT INTO users (username, password, user_id) VALUES ($1, $2, $3)', [newUser.username, newUser.password, newUser.userId]);
         res.status(201).json({ message: 'User registered successfully', user: { id: newUser.userId, username: newUser.username } });
     } catch (error) {
         console.log(error);
@@ -54,7 +51,7 @@ router.post('/login', async(req, res) => {
     try {
         const { username, password} = req.body;
         //change later
-        const user = users.find(user => user.username === username);
+        const user = await db.query('SELECT * FROM users WHERE username = $1', [username]);
         console.log(user || "User not found");
         if (!user) {
             return res.status(400).json({ message: `Username doesn't exist` });
