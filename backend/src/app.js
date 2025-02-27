@@ -9,7 +9,7 @@ var sequelize = require('./db');
 const { syncDatabase } = require('./db');
 
 dotenv.config()
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 6000;
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');

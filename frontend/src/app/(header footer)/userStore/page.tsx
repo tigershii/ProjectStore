@@ -1,15 +1,18 @@
 import { getUserItems } from "@/lib/api/item";
 import ItemCardCheckout from "@/components/(items)/ItemCardCheckout";
-import { Button } from "@/components/ui/button";
 import { Item } from "@/types/item";
-import { RefreshCcw } from "lucide-react";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 export default async function Store() {
   let items = [];
   let hasError = false;
 
   try {
-    items = await getUserItems("1");
+    //items = await getUserItems("1");
+    items = [{id: "1", title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: "2", title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}]
   } catch (error) {
     console.error("Failed to fetch user items:", error);
     hasError = true;
@@ -26,7 +29,36 @@ export default async function Store() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">Your Listings</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Your Listings</h1>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">Add Item</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add Item</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Item Name
+                </Label>
+                <Input id="name" className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="username" className="text-right">
+                  Username
+                </Label>
+                <Input id="username" value="@peduarte" className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="text-white dark:text-black">Save changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-1/2">
           {items.length > 0 ? (
