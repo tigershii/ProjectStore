@@ -50,8 +50,13 @@ export async function getCategories() {
 }
 
 export async function getUserItems(userId: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items/user/${userId}`);
-  return await response.json();
+  try {
+    const response = await fetch(`/api/items/user/${userId}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user items:", error);
+    throw new Error("Failed to fetch user items");
+  }
 }
 
 export async function createItem(item: Item) {
