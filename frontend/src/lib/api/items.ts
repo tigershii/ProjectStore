@@ -1,4 +1,3 @@
-import { Item } from "@/types/item";
 
 export async function getItems(page: number) {
   // try {
@@ -29,12 +28,12 @@ export async function getItems(page: number) {
   return {items: mockItems.slice((page - 1) * 16, page * 16), totalItems: 50}
 }
 
-export async function getItem(id: string) : Promise<Item> {
+export async function getItem(id: number) {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         id: id,
-        title: "Mock Item",
+        name: "Mock Item",
         price: 99.99,
         description: "This is a mock item description. ",
         images: ["/moon.svg", "/sun.svg", "/search.svg"],
@@ -59,8 +58,9 @@ export async function getUserItems(userId: string) {
   }
 }
 
-export async function createItem(item: Item) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items`, {
+export async function createItem({name, price, description, images}: {name: string, price: number, description: string, images: string[]}) {
+  const item = {name, price, description, images};
+  const response = await fetch(`api/items`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -71,8 +71,39 @@ export async function createItem(item: Item) {
 }
 
 export async function deleteItem(itemId: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items/${itemId}`, {
+  const response = await fetch(`api/items/${itemId}`, {
     method: 'DELETE',
   });
   return await response.json();
+}
+
+export async function getPresignedUrls(fileCount: number, fileTypes: string[]) {
+  try {
+    const response = await fetch(`http://localhost:4000/api/items/presignedURL`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({fileCount, fileTypes}),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching presigned URLs:", error);
+    throw new Error("Failed to fetch presigned URLs");
+  }
+}
+
+export async function sendToS3(presignedUrl: string, file: File) {
+  const response = await fetch(presignedUrl, {
+    method: 'PUT',
+    body: file,
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload image");
+  }
 }

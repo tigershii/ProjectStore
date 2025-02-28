@@ -13,6 +13,8 @@ var port = process.env.PORT || 6000;
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
+var itemsRouter = require('./routes/items');
+
 var app = express();
 
 const corsOptions = {
@@ -43,6 +45,7 @@ app.get('/api/health', async (req, res) => {
 });
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/items', itemsRouter);
 
 
 // catch 404 and forward to error handler

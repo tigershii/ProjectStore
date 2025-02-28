@@ -1,5 +1,5 @@
 import ItemBox from "@/components/(items)/itemBox";
-import { getItem } from "@/lib/api/item";
+import { getItem } from "@/lib/api/items";
 
 export default async function ItemPage({ params }: { params: { id: string } }) {
   const { id } = params;

@@ -49,7 +49,6 @@ const authSlice = createSlice({
             state.isLoggedIn = true;
             state.user = action.payload;
             state.error = null;
-            console.log(state.user)
         })
         builder.addCase(login.rejected, (state, action) => {
             state.loading = 'failed';
@@ -79,7 +78,6 @@ const authSlice = createSlice({
             state.isLoggedIn = true;
             state.user = action.payload;
             state.error = null;
-            console.log(action)
         })
         builder.addCase(verifySession.rejected, (state) => {
             state.loading = 'failed';

@@ -6,15 +6,12 @@ import { Item } from "@/types/item";
 import ImageCarousel from "@/components/(items)/ImageCarousel";
 import { useCartActions } from "@/store/reducers/cartReducer";
 import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-import { selectUser } from "@/store/reducers/authReducer";
 
 export default function ItemBox({item} : {item: Item}) {
-    const userId = useAppSelector(selectUser)?.id || "";
     const { addItem } = useCartActions();
     const router = useRouter();
     const handleAddToCart = () => {
-        addItem(userId, item.id);
+        addItem(item.id);
         router.push('/');
     }
 

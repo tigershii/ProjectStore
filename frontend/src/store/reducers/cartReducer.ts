@@ -16,7 +16,7 @@ interface cartState {
 const initialState: cartState = {
     quantity: 0,
     totalPrice: 0,
-    items: [{id: "1", title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: "2", title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
+    items: [{id: 1, title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: 2, title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
     loading: 'idle',
     error: null,
 }
@@ -58,7 +58,7 @@ const cartSlice = createSlice({
             state.loading = 'loading';
             state.error = null;
         })
-        builder.addCase(removeItem.fulfilled, (state, action: PayloadAction<string>) => {
+        builder.addCase(removeItem.fulfilled, (state, action: PayloadAction<number>) => {
             state.totalPrice -= state.items.find(item => item.id === action.payload)?.price || 0;
             state.items = state.items.filter(item => item.id !== action.payload);
             state.quantity -= 1;
@@ -73,9 +73,9 @@ const cartSlice = createSlice({
 export const useCartActions = () => {
     const dispatch = useDispatch<AppDispatch>();
     return {
-        fetchCart: (userId: string) => dispatch(fetchCart(userId)),
-        addItem: (userId: string, itemId: string) => dispatch(addItem({userId, itemId})),
-        removeItem: (userId: string, itemId: string) => dispatch(removeItem({userId, itemId})),
+        fetchCart: () => dispatch(fetchCart()),
+        addItem: (itemId: number) => dispatch(addItem({itemId})),
+        removeItem: (itemId: number) => dispatch(removeItem({itemId})),
     }
 }
 

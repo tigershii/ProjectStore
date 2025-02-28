@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const fetchCart = createAsyncThunk('cart/fetchCart', async (userId : string) => {
+export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
     const response = await fetch('/api/cart', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId }),
+        credentials: 'include',
     });
     if (!response.ok) {
         throw new Error('Failed to fetch cart');
@@ -15,13 +15,14 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async (userId : stri
     return data;
 })
 
-export const addItem = createAsyncThunk('cart/addItem', async ({userId, itemId} : {userId: string, itemId: string}) => {
+export const addItem = createAsyncThunk('cart/addItem', async ({itemId} : {itemId : number}) => {
     const response = await fetch('/api/cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, itemId }),
+        body: JSON.stringify({ itemId }),
+        credentials: 'include',
     });
     if (!response.ok) {
         throw new Error('Failed to add item to cart');
@@ -30,13 +31,14 @@ export const addItem = createAsyncThunk('cart/addItem', async ({userId, itemId} 
     return data;
 })
 
-export const removeItem = createAsyncThunk('cart/removeItem', async ({userId, itemId} : {userId: string, itemId: string}) => {
+export const removeItem = createAsyncThunk('cart/removeItem', async ({itemId} : {itemId: number}) => {
     const response = await fetch('/api/cart/remove?itemId=${itemId}', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, itemId }),
+        body: JSON.stringify({ itemId }),
+        credentials: 'include',
     });
     if (!response.ok) {
         throw new Error('Failed to remove item from cart');

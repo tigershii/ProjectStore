@@ -1,6 +1,6 @@
 //import Image from "next/image";
 import ItemCardContainer from "@/components/(items)/ItemCardContainer";
-import { getItems } from "@/lib/api/item";
+import { getItems } from "@/lib/api/items";
 
 interface Props {
   searchParams: {

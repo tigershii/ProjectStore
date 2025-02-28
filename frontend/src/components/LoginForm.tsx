@@ -15,7 +15,6 @@ import { useAuthActions } from "@/store/reducers/authReducer";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation'; // Change this import
-import { useEffect } from 'react'; // Add this import
 
 export function LoginForm({
   className,
@@ -24,7 +23,6 @@ export function LoginForm({
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [shouldRedirect, setShouldRedirect] = useState(false);
   const { login, signup } = useAuthActions();
   const router = useRouter();
 

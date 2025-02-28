@@ -13,7 +13,7 @@ export default function Checkout() {
   const { fetchCart } = useCartActions();
 
   useEffect(() => {
-    fetchCart("1");
+    fetchCart();
   }, [fetchCart]);
 
   const handleCheckout = () => {
