@@ -59,18 +59,23 @@ export async function getUserItems(userId: string) {
 }
 
 export async function createItem({name, price, description, images}: {name: string, price: number, description: string, images: string[]}) {
-  const item = {name, price, description, images};
-  const response = await fetch(`api/items`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({item}),
-  });
-  return await response.json();
+  try {
+    const response = await fetch(`http://localhost:4000/api/items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({name, price, description, images}),
+      credentials: 'include',
+    });
+    return await response.json();
+  } catch (error) {
+    console.log("Error creating item:", error);
+    throw new Error("Failed to create item");
+  }
 }
 
-export async function deleteItem(itemId: string) {
+export async function deleteItem(itemId: number) {
   const response = await fetch(`api/items/${itemId}`, {
     method: 'DELETE',
   });

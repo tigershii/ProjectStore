@@ -58,8 +58,7 @@ export default function CreateItemMenu() {
           description: formData.description,
           images: uploadedImageUrls
         }
-        // await createItem(newItem);
-        // alert("Item created successfully!");
+        await createItem(newItem);
         setFormData({
           name: "",
           price: "",

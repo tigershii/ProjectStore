@@ -31,10 +31,10 @@ router.get('/allUsers', async (req, res) => {
 // User is database, not implemented yet
 router.post('/signup', async (req, res) => {
     try {
-        const { username, password} = req.body;
-        //change later
+        const { username, password } = req.body;
+        
         const user = await Users.findOne({ where: { username } });
-        console.log(user);
+
         if (user !== null) {
             return res.status(400).json({ message: 'Username already exists' });
         }
@@ -49,7 +49,7 @@ router.post('/signup', async (req, res) => {
 
        // await newUser.save();
         await Users.create(newUser);
-        res.status(201).json({ message: 'User registered successfully', user: { id: newUser.userId, username: newUser.username } });
+        res.status(201).json({ message: 'User registered successfully', username: newUser.username });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Registration failed' });

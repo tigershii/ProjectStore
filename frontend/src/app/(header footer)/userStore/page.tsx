@@ -1,15 +1,14 @@
 import { getUserItems } from "@/lib/api/items";
-import ItemCardCheckout from "@/components/(items)/ItemCardCheckout";
+import ItemCardStore from "@/components/(items)/ItemCardStore";
 import { Item } from "@/types/item";
 import CreateItemMenu from "@/components/(items)/createItemMenu";
 
 export default async function Store() {
-  let items = [];
+  let items = [] as Item[];
   let hasError = false;
 
   try {
-    //items = await getUserItems("1");
-    items = [{id: "1", title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: "2", title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}]
+    items = await getUserItems("1");
   } catch (error) {
     console.error("Failed to fetch user items:", error);
     hasError = true;
@@ -34,7 +33,7 @@ export default async function Store() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-1/2">
           {items.length > 0 ? (
             items.map((item: Item) => (
-              <ItemCardCheckout key={item.id} item={item} />
+              <ItemCardStore key={item.id} item={item} />
             ))
           ) : (
             <p>You don&apos;t have any active listings.</p>

@@ -15,7 +15,7 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
     return data;
 })
 
-export const addItem = createAsyncThunk('cart/addItem', async ({itemId} : {itemId : number}) => {
+export const addItemCart = createAsyncThunk('cart/addItem', async ({itemId} : {itemId : number}) => {
     const response = await fetch('/api/cart', {
         method: 'POST',
         headers: {
@@ -31,7 +31,7 @@ export const addItem = createAsyncThunk('cart/addItem', async ({itemId} : {itemI
     return data;
 })
 
-export const removeItem = createAsyncThunk('cart/removeItem', async ({itemId} : {itemId: number}) => {
+export const removeItemCart = createAsyncThunk('cart/removeItem', async ({itemId} : {itemId: number}) => {
     const response = await fetch('/api/cart/remove?itemId=${itemId}', {
         method: 'DELETE',
         headers: {

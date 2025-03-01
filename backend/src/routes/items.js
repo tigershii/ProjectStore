@@ -1,7 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const { generatePresignedUrl } = require('../utils/s3');
+const authenticateToken = require('../middleware/authMiddleware');
 const { v4: uuidv4 } = require('uuid');
+const Items = require('../models/items')
+
+router.get('/', async(req, res) => {
+    try {
+        const items = await Items.findAll();
+        res.status(200).json(items);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Failed to fetch items'});
+    }
+});
+
+router.post('/', authenticateToken, async(req, res) => {
+    try {   
+        const { name, price, description, images } = req.body;
+        const userId = req.user.userId;
+        const newItem = {
+            title: name,
+            price: price,
+            description: description,
+            images: images,
+            sellerId: userId,
+            available: true
+        }
+        await Items.create(newItem)
+        res.status(201).json({ message: 'Item created successfully'})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Item creation failed' })
+    }
+});
 
 router.post('/presignedURL', async (req, res) => {
     console.log('Generating presigned URLs');

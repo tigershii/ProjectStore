@@ -8,10 +8,10 @@ import { useCartActions } from "@/store/reducers/cartReducer";
 import { useRouter } from "next/navigation";
 
 export default function ItemBox({item} : {item: Item}) {
-    const { addItem } = useCartActions();
+    const { addItemCart } = useCartActions();
     const router = useRouter();
     const handleAddToCart = () => {
-        addItem(item.id);
+        addItemCart(item.id);
         router.push('/');
     }
 
@@ -25,7 +25,7 @@ export default function ItemBox({item} : {item: Item}) {
               </div>
 
               <div className="pl-4">
-                <h1 className="text-2xl font-bold mb-2 text-black dark:text-white">{item.title}</h1>
+                <h1 className="text-2xl font-bold mb-2 text-black dark:text-white">{item.name}</h1>
                 <p className="text-gray-700 dark:text-gray-300 mb-4">{item.description}</p>
                 <p className="text-xl font-semibold mb-4 text-black dark:text-white">Price: ${item.price.toFixed(2)}</p>
 

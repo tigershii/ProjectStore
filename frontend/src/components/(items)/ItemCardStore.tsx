@@ -3,11 +3,11 @@ import { Item } from "@/types/item";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import Link from "next/link";
-import { useCartActions } from "@/store/reducers/cartReducer";
+import { deleteItem } from "@/lib/api/items";
+
 
 export default function ItemCardCheckout({item} : {item: Item}) {
     const { id, name, price, images } = item;
-    const { removeItemCart } = useCartActions();
     return (
         <Link href={`/item/${id}`}>
         <div className="container mx-auto align-items mb-4">
@@ -28,7 +28,7 @@ export default function ItemCardCheckout({item} : {item: Item}) {
                             <p className="text-md text-black dark:text-white">Price: ${price.toFixed(2)}</p>
                             <button onClick={(e) => {
                                 e.preventDefault(); // Prevent navigation
-                                removeItemCart(item.id);
+                                deleteItem(id);
                             }} className="w-full text-sm underline text-black dark:text-white py-2 text-left">
                                 Remove
                             </button>

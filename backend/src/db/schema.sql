@@ -11,7 +11,7 @@ CREATE TABLE items (
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     images TEXT[], -- Array of image URLs
-    seller_id VARCHAR(255) NOT NULL,
+    seller_id INTEGER NOT NULL,
     available BOOLEAN DEFAULT true,
     buyer_id VARCHAR(255),
     views INTEGER DEFAULT 0,

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
-import { fetchCart, addItem, removeItem } from "@/lib/api/cart";
+import { fetchCart, addItemCart, removeItemCart } from "@/lib/api/cart";
 
 interface cartState {
     quantity: number;
@@ -16,7 +16,7 @@ interface cartState {
 const initialState: cartState = {
     quantity: 0,
     totalPrice: 0,
-    items: [{id: 1, title: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: 2, title: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
+    items: [{id: 1, name: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: 2, name: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
     loading: 'idle',
     error: null,
 }
@@ -41,29 +41,29 @@ const cartSlice = createSlice({
             state.loading = 'failed';
             state.error = action.error.message || 'An error occurred';
         })
-        builder.addCase(addItem.pending, (state) => {
+        builder.addCase(addItemCart.pending, (state) => {
             state.loading = 'loading';
             state.error = null;
         })
-        builder.addCase(addItem.fulfilled, (state, action: PayloadAction<Item>) => {
+        builder.addCase(addItemCart.fulfilled, (state, action: PayloadAction<Item>) => {
             state.items.push(action.payload);
             state.quantity += 1;
             state.totalPrice += action.payload.price;
         })
-        builder.addCase(addItem.rejected, (state, action) => {
+        builder.addCase(addItemCart.rejected, (state, action) => {
             state.loading = 'failed';
             state.error = action.error.message || 'An error occurred';
         })
-        builder.addCase(removeItem.pending, (state) => {
+        builder.addCase(removeItemCart.pending, (state) => {
             state.loading = 'loading';
             state.error = null;
         })
-        builder.addCase(removeItem.fulfilled, (state, action: PayloadAction<number>) => {
+        builder.addCase(removeItemCart.fulfilled, (state, action: PayloadAction<number>) => {
             state.totalPrice -= state.items.find(item => item.id === action.payload)?.price || 0;
             state.items = state.items.filter(item => item.id !== action.payload);
             state.quantity -= 1;
         })
-        builder.addCase(removeItem.rejected, (state, action) => {
+        builder.addCase(removeItemCart.rejected, (state, action) => {
             state.loading = 'failed';
             state.error = action.error.message || 'An error occurred';
         })
@@ -74,8 +74,8 @@ export const useCartActions = () => {
     const dispatch = useDispatch<AppDispatch>();
     return {
         fetchCart: () => dispatch(fetchCart()),
-        addItem: (itemId: number) => dispatch(addItem({itemId})),
-        removeItem: (itemId: number) => dispatch(removeItem({itemId})),
+        addItemCart: (itemId: number) => dispatch(addItemCart({itemId})),
+        removeItemCart: (itemId: number) => dispatch(removeItemCart({itemId})),
     }
 }
 

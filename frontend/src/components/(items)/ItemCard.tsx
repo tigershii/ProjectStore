@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Item } from "@/types/item";
 
 export default function ItemCard({Item} : {Item: Item}) {
-    const { id, title, price, images } = Item;
+    const { id, name, price, images } = Item;
 
     return (
         <Link href={`/item/${id}`}>
@@ -19,7 +19,7 @@ export default function ItemCard({Item} : {Item: Item}) {
                 </div>
                 <CardHeader className="p-4">
                     <CardTitle className="text-md font-medium line-clamp-2 break-words">
-                        {title}
+                        {name}
                     </CardTitle>
                     <CardDescription>
                         ${price.toFixed(2)}
