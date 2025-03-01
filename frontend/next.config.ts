@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
         destination: 'http://localhost:4000/api/:path*',
       },
     ]
+  },
+  images: {
+    domains: ['tiger-ecommerce-images.s3.amazonaws.com']
   }
 };
 

@@ -1,10 +1,7 @@
 var jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-    // First check for token in cookies
     let token = req.cookies.token;
-    
-    // If no cookie, check Authorization header
     if (!token) {
         const authHeader = req.headers['authorization'];
         token = authHeader && authHeader.split(' ')[1];

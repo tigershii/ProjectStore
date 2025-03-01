@@ -6,8 +6,11 @@ import Link from "next/link";
 import { deleteItem } from "@/lib/api/items";
 
 
-export default function ItemCardCheckout({item} : {item: Item}) {
+export default function ItemCardStore({item} : {item: Item}) {
     const { id, name, price, images } = item;
+    if (images.length === 0) {
+        images.push("/placeholder.png");
+    }
     return (
         <Link href={`/item/${id}`}>
         <div className="container mx-auto align-items mb-4">

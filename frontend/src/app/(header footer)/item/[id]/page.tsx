@@ -1,4 +1,4 @@
-import ItemBox from "@/components/(items)/itemBox";
+import ItemBox from "@/components/(items)/ItemBox";
 import { getItem } from "@/lib/api/items";
 
 export default async function ItemPage({ params }: { params: { id: string } }) {

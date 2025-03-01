@@ -3,18 +3,35 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createItem, getPresignedUrls, sendToS3 } from "@/lib/api/items";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+
+const categories = [
+  "Home",
+  "Electronics",
+  "Fashion",
+  "Food",
+  "Books",
+  "Toys",
+  "Sports",
+  "Other"
+];
 
 export default function CreateItemMenu() {
+    const router = useRouter();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         price: "",
         description: "",
+        category: "",
         images: [] as string[]
     });
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -22,6 +39,13 @@ export default function CreateItemMenu() {
             ...formData,
             [id]: value
         })
+    }
+
+    const handleCategoryChange = (value: string) => {
+      setFormData({
+        ...formData,
+        category: value
+      }); 
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +59,7 @@ export default function CreateItemMenu() {
       try {
         if (!formData.name || !formData.price) {
           alert("Please fill in all required fields");
+          return;
         }
         setIsLoading(true);
         let uploadedImageUrls = [];
@@ -56,6 +81,7 @@ export default function CreateItemMenu() {
           name: formData.name,
           price: parseFloat(formData.price),
           description: formData.description,
+          category: formData.category,
           images: uploadedImageUrls
         }
         await createItem(newItem);
@@ -63,18 +89,27 @@ export default function CreateItemMenu() {
           name: "",
           price: "",
           description: "",
+          category: "",
           images: []
         })
         setImageFiles([]);
+        
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        
+        setIsDialogOpen(false);
+        
       } catch (error) {
         console.error(error);
       } finally {
+        router.refresh();
         setIsLoading(false);
       }
     }
 
     return (
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">Create Item</Button>
         </DialogTrigger>
@@ -103,13 +138,44 @@ export default function CreateItemMenu() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right">
+                Category
+              </Label>
+              <div className="col-span-3">
+                <Select value={formData.category} onValueChange={handleCategoryChange}>
+                  <SelectTrigger>
+                    <SelectValue>{formData.category || "Select a category"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">
                 Images
               </Label>
-              <Input type="file" accept="image/*" multiple className="col-span-3" onChange={handleFileChange}/>
+              <Input 
+                ref={fileInputRef} 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                className="col-span-3" 
+                onChange={handleFileChange}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleSubmit} disabled={isLoading} className="text-white dark:text-black">{isLoading ? 'Uploading...' : 'Submit'}</Button>
+            <Button 
+              type="submit" 
+              onClick={handleSubmit} 
+              disabled={isLoading} 
+              className="text-white dark:text-black"
+            >
+              {isLoading ? 'Uploading...' : 'Submit'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,14 +1,17 @@
+import { cookies } from 'next/headers';
 import { getUserItems } from "@/lib/api/items";
 import ItemCardStore from "@/components/(items)/ItemCardStore";
 import { Item } from "@/types/item";
-import CreateItemMenu from "@/components/(items)/createItemMenu";
+import CreateItemMenu from "@/components/(items)/CreateItemMenu";
 
 export default async function Store() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
   let items = [] as Item[];
   let hasError = false;
 
   try {
-    items = await getUserItems("1");
+    items = await getUserItems(-1, token.value);
   } catch (error) {
     console.error("Failed to fetch user items:", error);
     hasError = true;
@@ -36,7 +39,7 @@ export default async function Store() {
               <ItemCardStore key={item.id} item={item} />
             ))
           ) : (
-            <p>You don&apos;t have any active listings.</p>
+            <p className="col-span-3">You don&apos;t have any active listings.</p>
           )}
         </div>
       </div>

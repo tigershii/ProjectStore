@@ -10,9 +10,10 @@ const Items = sequelize.define(
             autoIncrement: true,
             field: 'item_id'
         },
-        title: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'title'
         },
         price: {
             type: DataTypes.FLOAT,
@@ -21,6 +22,10 @@ const Items = sequelize.define(
         description: {
             type: DataTypes.TEXT,
             allowNull: true,
+        },
+        category: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         images: {
             type: DataTypes.ARRAY(DataTypes.TEXT),

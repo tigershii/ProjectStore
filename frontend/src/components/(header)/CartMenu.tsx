@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 import { selectCartItems, selectCartQuantity, selectCartTotalPrice} from "@/store/reducers/cartReducer";
 import { selectLoggedIn } from "@/store/reducers/authReducer";
 import { useAppSelector } from "@/store/hooks";
-import ItemCardCart from "../(items)/itemCardCart";
+import ItemCardCart from "../(items)/ItemCardCart";
 import { useRouter } from "next/navigation";
 
 export default function CartMenu() {

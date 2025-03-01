@@ -3,6 +3,7 @@ const router = express.Router();
 const { generatePresignedUrl } = require('../utils/s3');
 const authenticateToken = require('../middleware/authMiddleware');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 const Items = require('../models/items')
 
 router.get('/', async(req, res) => {
@@ -17,12 +18,13 @@ router.get('/', async(req, res) => {
 
 router.post('/', authenticateToken, async(req, res) => {
     try {   
-        const { name, price, description, images } = req.body;
+        const { name, price, description, category, images } = req.body;
         const userId = req.user.userId;
         const newItem = {
-            title: name,
+            name: name,
             price: price,
             description: description,
+            category: category,
             images: images,
             sellerId: userId,
             available: true
@@ -32,6 +34,27 @@ router.post('/', authenticateToken, async(req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Item creation failed' })
+    }
+});
+
+router.get('/user/:userId?', async(req, res) => {
+    try {
+        let userId = req.params.userId;
+
+        if (userId == -1) {
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ message: 'No token provided' });
+            }
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            userId = decoded.userId;
+        }
+        const items = await Items.findAll({ where: { sellerId: userId } });
+        res.status(200).json(items);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Failed to fetch items' });
     }
 });
 

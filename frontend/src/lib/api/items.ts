@@ -1,3 +1,4 @@
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export async function getItems(page: number) {
   // try {
@@ -12,7 +13,7 @@ export async function getItems(page: number) {
   // }
   const mockItem = {
       id: '1',
-      title: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
+      name: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
       price: 9.99,
       description: "This is a mock item description. ",
       images: ["/moon.svg", "/sun.svg", "/search.svg"],
@@ -22,7 +23,7 @@ export async function getItems(page: number) {
   for (let i = 0; i < 50; i++) {
     const newItem = {...mockItem}
     newItem.id = 'Item' + i;
-    newItem.title = `Item ${i + 1}`;
+    newItem.name = `Item ${i + 1}`;
     mockItems.push(newItem);
   }
   return {items: mockItems.slice((page - 1) * 16, page * 16), totalItems: 50}
@@ -44,13 +45,19 @@ export async function getItem(id: number) {
 }
 
 export async function getCategories() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+  const response = await fetch(`${API_BASE_URL}/categories`);
   return await response.json();
 }
 
-export async function getUserItems(userId: string) {
+export async function getUserItems(userId: number, token?: string) {
   try {
-    const response = await fetch(`/api/items/user/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/api/items/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+      credentials: 'include',
+    });
     return await response.json();
   } catch (error) {
     console.error("Error fetching user items:", error);
@@ -60,7 +67,7 @@ export async function getUserItems(userId: string) {
 
 export async function createItem({name, price, description, images}: {name: string, price: number, description: string, images: string[]}) {
   try {
-    const response = await fetch(`http://localhost:4000/api/items`, {
+    const response = await fetch(`${API_BASE_URL}/api/items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +91,7 @@ export async function deleteItem(itemId: number) {
 
 export async function getPresignedUrls(fileCount: number, fileTypes: string[]) {
   try {
-    const response = await fetch(`http://localhost:4000/api/items/presignedURL`, {
+    const response = await fetch(`${API_BASE_URL}/api/items/presignedURL`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
