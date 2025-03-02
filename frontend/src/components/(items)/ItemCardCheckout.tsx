@@ -14,13 +14,18 @@ export default function ItemCardCheckout({item} : {item: Item}) {
             <Card className="dark:bg-secondary-dark">
                 <CardContent className="p-2">
                     <div className="grid md:grid-cols-2 gap-4">
-                        <div className="aspect-square relative">
-                            <Image 
-                                src={images[0]}
-                                alt="Product"
-                                fill
-                                className="object-cover"
-                            />
+                        <div className="w-full pt-[100%] relative">
+                            <div className="absolute inset-0">
+                                <Image 
+                                    src={images[0]}
+                                    alt={name}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-contain"
+                                    priority={true}
+                                />
+                            </div>
+
                         </div>
 
                         <div className="pl-4">

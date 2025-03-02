@@ -27,7 +27,7 @@ export default function ItemBox({item} : {item: Item}) {
               <div className="pl-4">
                 <h1 className="text-2xl font-bold mb-2 text-black dark:text-white">{item.name}</h1>
                 <p className="text-gray-700 dark:text-gray-300 mb-4">{item.description}</p>
-                <p className="text-xl font-semibold mb-4 text-black dark:text-white">Price: ${item.price.toFixed(2)}</p>
+                <p className="text-xl font-semibold mb-4 text-black dark:text-white">Price: ${item.price}</p>
 
                 <Button type="submit" onClick={handleAddToCart} className="w-full text-white dark:text-black py-2">
                   Add to Cart

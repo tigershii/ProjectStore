@@ -7,7 +7,7 @@ const Users = require('../models/users');
 
 router.get('/verifySession', authenticateToken, async (req, res) => {
     try {
-        const user = await Users.findOne({ where: { userId: req.user.userId } });
+        const user = await Users.findOne({ where: { id: req.user.userId } });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -74,7 +74,7 @@ router.post('/login', async(req, res) => {
         }
 
 
-        const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -84,7 +84,7 @@ router.post('/login', async(req, res) => {
             path: '/'
         });
 
-        res.status(200).json({ message: 'Login successful', user: { id: user.userId, username: user.username } });
+        res.status(200).json({ message: 'Login successful', user: { id: user.id, username: user.username } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Login failed' });

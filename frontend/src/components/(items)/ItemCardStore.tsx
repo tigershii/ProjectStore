@@ -4,9 +4,10 @@ import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { deleteItem } from "@/lib/api/items";
-
+import { useRouter } from "next/navigation";
 
 export default function ItemCardStore({item} : {item: Item}) {
+    const router = useRouter();
     const { id, name, price, images } = item;
     if (images.length === 0) {
         images.push("/placeholder.png");
@@ -17,21 +18,26 @@ export default function ItemCardStore({item} : {item: Item}) {
             <Card className="dark:bg-secondary-dark">
                 <CardContent className="p-2">
                     <div className="grid md:grid-cols-2 gap-4">
-                        <div className="aspect-square relative">
-                            <Image 
-                                src={images[0]}
-                                alt="Product"
-                                fill
-                                className="object-cover"
-                            />
+                        <div className="w-full pt-[100%] relative">
+                            <div className="absolute inset-0">
+                                <Image 
+                                    src={images[0]}
+                                    alt={name}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-contain"
+                                    priority={true}
+                                />
+                            </div>
                         </div>
 
                         <div className="pl-4">
                             <h1 className="text-md mb-2 text-black dark:text-white line-clamp-5">{name}</h1>
                             <p className="text-md text-black dark:text-white">Price: ${price.toFixed(2)}</p>
                             <button onClick={(e) => {
-                                e.preventDefault(); // Prevent navigation
+                                e.preventDefault();
                                 deleteItem(id);
+                                router.refresh();
                             }} className="w-full text-sm underline text-black dark:text-white py-2 text-left">
                                 Remove
                             </button>

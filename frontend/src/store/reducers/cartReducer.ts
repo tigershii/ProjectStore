@@ -16,7 +16,7 @@ interface cartState {
 const initialState: cartState = {
     quantity: 0,
     totalPrice: 0,
-    items: [{id: 1, name: "Item 1", price: 100, description: "Description 1", images: ["/moon.svg"], sellerId: "1"}, {id: 2, name: "Item 2", price: 200, description: "Description 2", images: ["/moon.svg"], sellerId: "2"}],
+    items: [],
     loading: 'idle',
     error: null,
 }

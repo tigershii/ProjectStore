@@ -32,11 +32,16 @@ export default function ImageCarousel({images} : {images: string[]}) {
     <div className="mx-auto max-w-md">
       <Carousel setApi={setApi} className="w-full max-w-md ">
         <CarouselContent>
-          {images.map((url) => (
+          {images.length > 0 ?
+          images.map((url) => (
             <CarouselItem key={url} className="flex aspect-square items-center justify-center p-6">
-              <Image src={url} alt="moon" width={1000} height={1000} />
+              <Image src={url} alt="Product" width={1000} height={1000} />
             </CarouselItem>
-          ))}
+          )) : 
+            <CarouselItem className="flex aspect-square items-center justify-center p-6">
+              <Image src="/placeholder.png" alt="Product" width={1000} height={1000} />
+            </CarouselItem>
+          }
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

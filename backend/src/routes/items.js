@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { generatePresignedUrl } = require('../utils/s3');
+const { generatePresignedUrl, deleteFromS3 } = require('../utils/s3');
 const authenticateToken = require('../middleware/authMiddleware');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
@@ -8,8 +8,32 @@ const Items = require('../models/items')
 
 router.get('/', async(req, res) => {
     try {
-        const items = await Items.findAll();
-        res.status(200).json(items);
+        const page = parseInt(req.query.page) || 1;
+        const limit = 16;
+        const offset = (page - 1) * limit;
+        
+        const result = await Items.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [
+                ['views', 'DESC'], 
+                ['name', 'ASC'] 
+            ]
+        });
+        
+        const totalItems = result.count;
+        const totalPages = Math.ceil(totalItems / limit);
+        
+        res.status(200).json({
+            items: result.rows,
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Failed to fetch items'});
@@ -50,11 +74,52 @@ router.get('/user/:userId?', async(req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             userId = decoded.userId;
         }
-        const items = await Items.findAll({ where: { sellerId: userId } });
+        const items = await Items.findAll({ where: { sellerId: userId }, order: [['name', 'ASC']] });
         res.status(200).json(items);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Failed to fetch items' });
+    }
+});
+
+router.get('/:itemId', async(req, res) => {
+    try {
+        const itemId = req.params.itemId;
+        const item = await Items.findOne({ where: { id: itemId } });
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+        Items.increment('views', { where: { id: itemId } });
+        res.status(200).json(item);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Failed to fetch item' });
+    }
+});
+
+router.delete('/:itemId', authenticateToken, async(req, res) => {
+    try {
+        const itemId = req.params.itemId;
+        const userId = req.user.userId;
+        const item = await Items.findOne({ where: { id: itemId } });
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+        if (item.sellerId !== userId) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+        if (item.images.length > 0) {
+            let imageKeys = item.images.map(url => {
+                const key = url.split('.com/')[1];
+                return { Key: key };
+            });
+            deleteFromS3(imageKeys);
+        }
+        
+        await Items.destroy({ where: { id: itemId } });
+        res.status(200).json({ message: 'Item deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to delete item' });
     }
 });
 

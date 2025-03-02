@@ -1,52 +1,46 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export async function getItems(page: number) {
-  // try {
-  //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items?page=${page}`);
-  //   return await response.json();
-  // } catch (error) {
-  //   console.error("Error fetching items:", error);
-  //   return {
-  //     items: [],
-  //     totalPages: 0
-  //   }
-  // }
-  const mockItem = {
-      id: '1',
-      name: "Air Jordan 5 Black Metallic Reimagined OG Retro 2025 ed. HF3975-001",
-      price: 9.99,
-      description: "This is a mock item description. ",
-      images: ["/moon.svg", "/sun.svg", "/search.svg"],
-      sellerId: "1"
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/items?page=${page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return {
+      items: data.items,
+      pagination: data.pagination
+    };
+  } catch (error) {
+    console.error("Error fetching items:", error);
+    return {
+      items: [],
+      pagination: {
+        currentPage: page,
+        totalPages: 0,
+        totalItems: 0,
+        hasNextPage: false,
+        hasPrevPage: false
+      }
+    };
   }
-  const mockItems = []
-  for (let i = 0; i < 50; i++) {
-    const newItem = {...mockItem}
-    newItem.id = 'Item' + i;
-    newItem.name = `Item ${i + 1}`;
-    mockItems.push(newItem);
-  }
-  return {items: mockItems.slice((page - 1) * 16, page * 16), totalItems: 50}
 }
 
 export async function getItem(id: number) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: id,
-        name: "Mock Item",
-        price: 99.99,
-        description: "This is a mock item description. ",
-        images: ["/moon.svg", "/sun.svg", "/search.svg"],
-        sellerId: "1",
-      });
-    }, 100);
-  });
-}
-
-export async function getCategories() {
-  const response = await fetch(`${API_BASE_URL}/categories`);
-  return await response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/items/${id}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    throw new Error("Failed to fetch item");
+  }
 }
 
 export async function getUserItems(userId: number, token?: string) {
@@ -83,10 +77,16 @@ export async function createItem({name, price, description, images}: {name: stri
 }
 
 export async function deleteItem(itemId: number) {
-  const response = await fetch(`api/items/${itemId}`, {
-    method: 'DELETE',
-  });
-  return await response.json();
+  try {
+    const response = await fetch(`api/items/${itemId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    throw new Error("Failed to delete item");
+  }
 }
 
 export async function getPresignedUrls(fileCount: number, fileTypes: string[]) {

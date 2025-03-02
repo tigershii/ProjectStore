@@ -5,6 +5,17 @@ import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+const categories = [
+  "Home",
+  "Electronics",
+  "Fashion",
+  "Food",
+  "Books",
+  "Toys",
+  "Sports",
+  "Other"
+];
+
 export default function CategoryMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
@@ -57,13 +68,13 @@ export default function CategoryMenu() {
         >
           <div className="relative rounded-md border border-neutral-200 bg-white text-neutral-950 shadow-md data-[state=open]:animate-in dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50">
             <div className="p-1 max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-              {[...Array(10)].map((_, i) => (
+              {categories.map((category) => (
                 <Link
-                  key={i}
-                  href={`/temp${i + 1}`}
+                  key={category}
+                  href='/'
                   className="block select-none rounded-sm px-2 py-1.5 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  Temp {i + 1}
+                  {category}
                 </Link>
               ))}
             </div>

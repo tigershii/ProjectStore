@@ -1,11 +1,10 @@
 import ItemBox from "@/components/(items)/ItemBox";
 import { getItem } from "@/lib/api/items";
 
-export default async function ItemPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function ItemPage({ params }: { params: { id: number } }) {
+  const { id } = await params;
   try {
     const item = await getItem(id);
-    console.log("Item data:", item);
 
     if (!item) {
       return <div>Item not found</div>;

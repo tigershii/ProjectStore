@@ -11,7 +11,7 @@ export default async function Store() {
   let hasError = false;
 
   try {
-    items = await getUserItems(-1, token.value);
+    items = await getUserItems(-1, token?.value);
   } catch (error) {
     console.error("Failed to fetch user items:", error);
     hasError = true;
@@ -33,7 +33,7 @@ export default async function Store() {
         <CreateItemMenu/>
       </div>
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-1/2">
+        <div className="grid grid-cols-4 gap-4">
           {items.length > 0 ? (
             items.map((item: Item) => (
               <ItemCardStore key={item.id} item={item} />
