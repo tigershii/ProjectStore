@@ -1,8 +1,14 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-export async function getItems(page: number) {
+export async function getItems(page: number, category?: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/items?page=${page}`, {
+    const url = new URL(`${API_BASE_URL}/api/items`);
+    url.searchParams.append('page', page.toString());
+    if (category) {
+      url.searchParams.append('category', category);
+    }
+    
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -59,14 +65,14 @@ export async function getUserItems(userId: number, token?: string) {
   }
 }
 
-export async function createItem({name, price, description, images}: {name: string, price: number, description: string, images: string[]}) {
+export async function createItem({name, price, description, category, images}: {name: string, price: number, description: string, category: string, images: string[]}) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({name, price, description, images}),
+      body: JSON.stringify({name, price, description, category, images}),
       credentials: 'include',
     });
     return await response.json();

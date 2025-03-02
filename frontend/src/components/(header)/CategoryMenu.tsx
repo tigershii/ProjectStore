@@ -71,7 +71,7 @@ export default function CategoryMenu() {
               {categories.map((category) => (
                 <Link
                   key={category}
-                  href='/'
+                  href={`/?category=${category}`}
                   className="block select-none rounded-sm px-2 py-1.5 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   {category}

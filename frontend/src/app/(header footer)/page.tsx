@@ -4,15 +4,16 @@ import { getItems } from "@/lib/api/items";
 
 interface Props {
   searchParams: {
-    page?: string
+    page?: string,
+    category?: string
   };
 }
 
 export default async function Home({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
-  const { items, pagination } = await getItems(page);
-  console.log(pagination);
+  const category = params.category;
+  const { items, pagination } = await getItems(page, category);
   
   return (
     <div className="flex flex-col w-full">

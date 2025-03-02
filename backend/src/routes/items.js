@@ -8,11 +8,14 @@ const Items = require('../models/items')
 
 router.get('/', async(req, res) => {
     try {
+        console.log(req.query);
         const page = parseInt(req.query.page) || 1;
+        const category = req.query.category;
         const limit = 16;
         const offset = (page - 1) * limit;
         
         const result = await Items.findAndCountAll({
+            where: category ? { category: category } : {},
             limit: limit,
             offset: offset,
             order: [
@@ -53,7 +56,8 @@ router.post('/', authenticateToken, async(req, res) => {
             sellerId: userId,
             available: true
         }
-        await Items.create(newItem)
+        console.log(newItem);
+        await Items.create(newItem);
         res.status(201).json({ message: 'Item created successfully'})
     } catch (error) {
         console.log(error);

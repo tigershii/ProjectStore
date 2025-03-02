@@ -47,7 +47,7 @@ export default function ImageCarousel({images} : {images: string[]}) {
         <CarouselNext />
       </Carousel>
       <div className="py-2 text-center text-sm text-muted-foreground dark:text-white ml-4">
-        Image {current} of {count}
+        {current} of {count}
       </div>
     </div>
   )
