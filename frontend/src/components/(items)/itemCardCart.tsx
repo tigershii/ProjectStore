@@ -10,7 +10,8 @@ import { SheetClose } from "../ui/sheet";
 export default function ItemCardCart({item} : {item: Item}) {
     const { removeItemCart } = useCartActions();
 
-    const { id, name, price, images } = item;
+    const { id, name, price, images = [] } = item;
+
     return (
         <SheetClose asChild>
             <Link href={`/item/${id}`}>
@@ -20,7 +21,7 @@ export default function ItemCardCart({item} : {item: Item}) {
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="aspect-square relative">
                                     <Image 
-                                        src={images[0]}
+                                        src={images.length > 0 ? images[0] : "/placeholder.png"}
                                         alt="Product"
                                         fill
                                         className="object-cover"
@@ -29,9 +30,9 @@ export default function ItemCardCart({item} : {item: Item}) {
 
                                 <div className="pl-4">
                                     <h1 className="text-md mb-2 text-black dark:text-white line-clamp-5">{name}</h1>
-                                    <p className="text-md text-black dark:text-white">Price: ${price.toFixed(2)}</p>
+                                    <p className="text-md text-black dark:text-white">Price: ${price}</p>
                                     <button onClick={(e) => {
-                                        e.preventDefault(); // Prevent navigation
+                                        e.preventDefault();
                                         removeItemCart(item.id);
                                     }} className="w-full text-sm underline text-black dark:text-white py-2 text-left">
                                         Remove

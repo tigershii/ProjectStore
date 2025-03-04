@@ -4,17 +4,10 @@ import { useAppSelector } from "@/store/hooks";
 import { selectCartItems, selectCartTotalPrice } from "@/store/reducers/cartReducer";
 import ItemCardCheckout from "@/components/(items)/ItemCardCheckout";
 import { Button } from "@/components/ui/button";
-import { useCartActions } from "@/store/reducers/cartReducer";
-import { useEffect } from "react";
 
 export default function Checkout() {
   const cartItems = useAppSelector(selectCartItems);
   const cartTotalPrice = useAppSelector(selectCartTotalPrice);
-  const { fetchCart } = useCartActions();
-
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
 
   const handleCheckout = () => {
     console.log("Checkout button clicked!");

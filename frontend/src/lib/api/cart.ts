@@ -32,7 +32,7 @@ export const addItemCart = createAsyncThunk('cart/addItem', async ({itemId} : {i
 })
 
 export const removeItemCart = createAsyncThunk('cart/removeItem', async ({itemId} : {itemId: number}) => {
-    const response = await fetch('/api/cart/remove?itemId=${itemId}', {
+    const response = await fetch(`/api/cart?itemId=${itemId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -43,5 +43,6 @@ export const removeItemCart = createAsyncThunk('cart/removeItem', async ({itemId
     if (!response.ok) {
         throw new Error('Failed to remove item from cart');
     }
-    return itemId;
+    const data = await response.json();
+    return data;
 })

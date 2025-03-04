@@ -58,10 +58,11 @@ const cartSlice = createSlice({
             state.loading = 'loading';
             state.error = null;
         })
-        builder.addCase(removeItemCart.fulfilled, (state, action: PayloadAction<number>) => {
-            state.totalPrice -= state.items.find(item => item.id === action.payload)?.price || 0;
-            state.items = state.items.filter(item => item.id !== action.payload);
-            state.quantity -= 1;
+        builder.addCase(removeItemCart.fulfilled, (state, action: PayloadAction<{items: Item[], quantity: number, totalPrice: number}>) => {
+            state.loading = 'succeeded';
+            state.items = action.payload.items;
+            state.quantity = action.payload.quantity;
+            state.totalPrice = action.payload.totalPrice;
         })
         builder.addCase(removeItemCart.rejected, (state, action) => {
             state.loading = 'failed';
