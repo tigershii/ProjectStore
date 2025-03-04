@@ -7,6 +7,7 @@ var cors = require('cors');
 var dotenv = require('dotenv');
 var sequelize = require('./db');
 const { syncDatabase } = require('./db');
+const { connectRedis } = require('./redis/client');
 
 dotenv.config()
 var port = process.env.PORT || 6000;
@@ -14,6 +15,7 @@ var port = process.env.PORT || 6000;
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var itemsRouter = require('./routes/items');
+var cartRouter = require('./routes/cart');
 
 var app = express();
 
@@ -46,6 +48,7 @@ app.get('/api/health', async (req, res) => {
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/items', itemsRouter);
+app.use('/api/cart', cartRouter);
 
 
 // catch 404 and forward to error handler
@@ -70,6 +73,7 @@ async function initializeApp() {
     console.log('Database connection established successfully.');
     
     await syncDatabase();
+    await connectRedis();
     
     app.listen(port, () => console.log(`Server running on port ${port}`));
   } catch (error) {

@@ -5,14 +5,22 @@ const authenticateToken = require('../middleware/authMiddleware');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const Items = require('../models/items')
+const { cacheItem, getCachedItem, cachePopularItems, getCachedPopularItems, invalidateItemCache } = require('../redis/items');
 
 router.get('/', async(req, res) => {
     try {
-        console.log(req.query);
         const page = parseInt(req.query.page) || 1;
         const category = req.query.category;
         const limit = 16;
         const offset = (page - 1) * limit;
+
+        if (page === 1 && !category) {
+            const cachedItems = await getCachedPopularItems();
+            if (cachedItems) {
+                console.log('Retrieved popular items from cache');
+                return res.status(200).json(cachedItems);
+            }
+        }
         
         const result = await Items.findAndCountAll({
             where: category ? { category: category } : {},
@@ -26,8 +34,8 @@ router.get('/', async(req, res) => {
         
         const totalItems = result.count;
         const totalPages = Math.ceil(totalItems / limit);
-        
-        res.status(200).json({
+
+        const response = {
             items: result.rows,
             pagination: {
                 currentPage: page,
@@ -36,7 +44,13 @@ router.get('/', async(req, res) => {
                 hasNextPage: page < totalPages,
                 hasPrevPage: page > 1
             }
-        });
+        }
+
+        if (page === 1 && !category) {
+            await cachePopularItems(response);
+        }
+        
+        res.status(200).json(response);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Failed to fetch items'});
@@ -58,6 +72,7 @@ router.post('/', authenticateToken, async(req, res) => {
         }
         console.log(newItem);
         await Items.create(newItem);
+        await cacheItem(newItem.id, newItem);
         res.status(201).json({ message: 'Item created successfully'})
     } catch (error) {
         console.log(error);
@@ -89,11 +104,20 @@ router.get('/user/:userId?', async(req, res) => {
 router.get('/:itemId', async(req, res) => {
     try {
         const itemId = req.params.itemId;
+
+        const cachedItem = await getCachedItem(itemId);
+        if (cachedItem) {
+            console.log('Retrieved item from cache');
+            Items.increment('views', { where: { id: itemId } });
+            return res.status(200).json(cachedItem);
+        }
+
         const item = await Items.findOne({ where: { id: itemId } });
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }
         Items.increment('views', { where: { id: itemId } });
+        await cacheItem(itemId, item);
         res.status(200).json(item);
     } catch (error) {
         console.log(error);
@@ -121,6 +145,7 @@ router.delete('/:itemId', authenticateToken, async(req, res) => {
         }
         
         await Items.destroy({ where: { id: itemId } });
+        await invalidateItemCache(itemId);
         res.status(200).json({ message: 'Item deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete item' });
