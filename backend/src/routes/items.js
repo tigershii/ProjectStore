@@ -11,26 +11,78 @@ router.get('/', async(req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const category = req.query.category;
+        const search = req.query.search;
         const limit = 16;
         const offset = (page - 1) * limit;
 
-        if (page === 1 && !category) {
+        if (page === 1 && !category && !search) {
             const cachedItems = await getCachedPopularItems();
             if (cachedItems) {
                 console.log('Retrieved popular items from cache');
                 return res.status(200).json(cachedItems);
             }
         }
-        
-        const result = await Items.findAndCountAll({
-            where: category ? { category: category } : {},
-            limit: limit,
-            offset: offset,
-            order: [
-                ['views', 'DESC'], 
-                ['name', 'ASC'] 
-            ]
-        });
+        let result;
+        if (!search) {
+            result = await Items.findAndCountAll({
+                where: category ? { category: category } : {},
+                limit: limit,
+                offset: offset,
+                order: [
+                    ['views', 'DESC'], 
+                    ['name', 'ASC'] 
+                ]
+            });
+        } else {
+            const sequelize = require('../db');
+            
+            const sanitizedSearch = search.replace(/'/g, "''");
+            
+            const [rows, count] = await Promise.all([
+                sequelize.query(`
+                    SELECT * 
+                    FROM items 
+                    WHERE 
+                        title ILIKE :searchPattern OR
+                        description ILIKE :searchPattern OR
+                        category ILIKE :searchPattern
+                    ORDER BY 
+                        (CASE WHEN title ILIKE :searchPattern THEN 3 ELSE 0 END) +
+                        (CASE WHEN description ILIKE :searchPattern THEN 1 ELSE 0 END) +
+                        (CASE WHEN category ILIKE :searchPattern THEN 2 ELSE 0 END) DESC,
+                        views DESC,
+                        title ASC
+                    LIMIT :limit OFFSET :offset
+                `, {
+                    replacements: { 
+                        searchPattern: `%${sanitizedSearch}%`, 
+                        limit, 
+                        offset 
+                    },
+                    type: sequelize.QueryTypes.SELECT,
+                    model: Items,
+                    mapToModel: true
+                }),
+                sequelize.query(`
+                    SELECT COUNT(*) as count 
+                    FROM items 
+                    WHERE 
+                        title ILIKE :searchPattern OR
+                        description ILIKE :searchPattern OR
+                        category ILIKE :searchPattern
+                `, {
+                    replacements: { 
+                        searchPattern: `%${sanitizedSearch}%`
+                    },
+                    type: sequelize.QueryTypes.SELECT
+                })
+            ]);
+            
+            result = {
+                rows: rows,
+                count: parseInt(count[0].count)
+            };
+        } 
         
         const totalItems = result.count;
         const totalPages = Math.ceil(totalItems / limit);
@@ -46,7 +98,7 @@ router.get('/', async(req, res) => {
             }
         }
 
-        if (page === 1 && !category) {
+        if (page === 1 && !category && !search) {
             await cachePopularItems(response);
         }
         

@@ -1,11 +1,13 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-export async function getItems(page: number, category?: string) {
+export async function getItems(page: number, category?: string, search?: string) {
   try {
     const url = new URL(`${API_BASE_URL}/api/items`);
     url.searchParams.append('page', page.toString());
     if (category) {
       url.searchParams.append('category', category);
+    } else if (search) {
+      url.searchParams.append('search', search);
     }
     
     const response = await fetch(url.toString(), {
