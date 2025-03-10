@@ -1,7 +1,13 @@
 import ItemBox from "@/components/(items)/ItemBox";
 import { getItem } from "@/lib/api/items";
 
-export default async function ItemPage({ params }: { params: { id: number } }) {
+interface Props {
+  params: {
+    id: number;
+  };
+}
+
+export default async function ItemPage({ params }: Props) {
   const { id } = await params;
   try {
     const item = await getItem(id);

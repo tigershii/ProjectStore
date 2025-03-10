@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
 export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
-    const response = await fetch('/api/cart', {
+    const response = await fetch(`${API_BASE_URL}/api/cart`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -16,7 +18,7 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
 })
 
 export const addItemCart = createAsyncThunk('cart/addItem', async ({itemId} : {itemId : number}) => {
-    const response = await fetch('/api/cart', {
+    const response = await fetch(`${API_BASE_URL}/api/cart`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -28,11 +30,12 @@ export const addItemCart = createAsyncThunk('cart/addItem', async ({itemId} : {i
         throw new Error('Failed to add item to cart');
     }
     const data = await response.json();
+    console.log(data);
     return data;
 })
 
 export const removeItemCart = createAsyncThunk('cart/removeItem', async ({itemId} : {itemId: number}) => {
-    const response = await fetch(`/api/cart?itemId=${itemId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/cart?itemId=${itemId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

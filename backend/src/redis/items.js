@@ -37,6 +37,11 @@ async function invalidateItemCache(itemId) {
   await client.del(POPULAR_ITEMS_CACHE_KEY);
 }
 
+async function invalidatePopularItemsCache() {
+  const client = await getRedisClient();
+  await client.del(POPULAR_ITEMS_CACHE_KEY);
+}
+
 module.exports = {
   connectRedis,
   getRedisClient,
@@ -44,5 +49,6 @@ module.exports = {
   getCachedItem,
   cachePopularItems,
   getCachedPopularItems,
-  invalidateItemCache
+  invalidateItemCache,
+  invalidatePopularItemsCache
 };

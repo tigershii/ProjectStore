@@ -4,8 +4,10 @@ const { generatePresignedUrl, deleteFromS3 } = require('../utils/s3');
 const authenticateToken = require('../middleware/authMiddleware');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const Items = require('../models/items')
-const { cacheItem, getCachedItem, cachePopularItems, getCachedPopularItems, invalidateItemCache } = require('../redis/items');
+const Items = require('../models/items');
+const Users = require('../models/users');
+const { cacheItem, getCachedItem, cachePopularItems, getCachedPopularItems, invalidateItemCache, invalidatePopularItemsCache } = require('../redis/items');
+const { cacheUser, getCachedUser } = require('../redis/user');
 
 router.get('/', async(req, res) => {
     try {
@@ -25,7 +27,7 @@ router.get('/', async(req, res) => {
         let result;
         if (!search) {
             result = await Items.findAndCountAll({
-                where: category ? { category: category } : {},
+                where: category ? { category: category, available: true } : { available: true },
                 limit: limit,
                 offset: offset,
                 order: [
@@ -46,6 +48,7 @@ router.get('/', async(req, res) => {
                         title ILIKE :searchPattern OR
                         description ILIKE :searchPattern OR
                         category ILIKE :searchPattern
+                        AND available = true
                     ORDER BY 
                         (CASE WHEN title ILIKE :searchPattern THEN 3 ELSE 0 END) +
                         (CASE WHEN description ILIKE :searchPattern THEN 1 ELSE 0 END) +
@@ -122,9 +125,9 @@ router.post('/', authenticateToken, async(req, res) => {
             sellerId: userId,
             available: true
         }
-        console.log(newItem);
         await Items.create(newItem);
         await cacheItem(newItem.id, newItem);
+        await invalidatePopularItemsCache();
         res.status(201).json({ message: 'Item created successfully'})
     } catch (error) {
         console.log(error);
@@ -136,17 +139,33 @@ router.get('/user/:userId?', async(req, res) => {
     try {
         let userId = req.params.userId;
 
-        if (userId == -1) {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
-            if (!token) {
-                return res.status(401).json({ message: 'No token provided' });
-            }
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        let loggedInUserId = null;
+        if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            userId = decoded.userId;
+            loggedInUserId = decoded.userId;
         }
-        const items = await Items.findAll({ where: { sellerId: userId }, order: [['name', 'ASC']] });
-        res.status(200).json(items);
+        if (userId == -1) {
+            userId = loggedInUserId;
+        }
+
+        const items = await Items.findAll({ where: { sellerId: userId, available: true }, order: [['name', 'ASC']] });
+
+        const isOwner = userId == loggedInUserId;
+
+        let username = await getCachedUser(userId);
+        if (!username) {
+            const user = await Users.findOne({ where: { id: userId } });
+            username = user.username;
+            await cacheUser(userId, username);
+        }
+        
+        res.status(200).json({
+            items,
+            isOwner,
+            username
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Failed to fetch items' });
@@ -157,19 +176,26 @@ router.get('/:itemId', async(req, res) => {
     try {
         const itemId = req.params.itemId;
 
-        const cachedItem = await getCachedItem(itemId);
-        if (cachedItem) {
+        let item = await getCachedItem(itemId);
+        if (item) {
             console.log('Retrieved item from cache');
-            Items.increment('views', { where: { id: itemId } });
-            return res.status(200).json(cachedItem);
+        } else {
+            item = await Items.findOne({ where: { id: itemId } });
+            if (!item) {
+                return res.status(404).json({ message: 'Item not found' });
+            }
+            await cacheItem(itemId, item);
         }
 
-        const item = await Items.findOne({ where: { id: itemId } });
-        if (!item) {
-            return res.status(404).json({ message: 'Item not found' });
+        let sellerUsername = await getCachedUser(item.sellerId);
+        if (!sellerUsername) {
+            const user = await Users.findOne({ where: { id: item.sellerId } });
+            sellerUsername = user.username;
+            await cacheUser(item.sellerId, sellerUsername);
         }
+        item = item.toJSON ? item.toJSON() : item;
+        item.sellerUsername = sellerUsername;
         Items.increment('views', { where: { id: itemId } });
-        await cacheItem(itemId, item);
         res.status(200).json(item);
     } catch (error) {
         console.log(error);
@@ -198,6 +224,7 @@ router.delete('/:itemId', authenticateToken, async(req, res) => {
         
         await Items.destroy({ where: { id: itemId } });
         await invalidateItemCache(itemId);
+        await invalidatePopularItemsCache();
         res.status(200).json({ message: 'Item deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete item' });

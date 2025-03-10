@@ -85,8 +85,9 @@ export async function createItem({name, price, description, category, images}: {
 }
 
 export async function deleteItem(itemId: number) {
+  console.log('deleteItem', itemId);
   try {
-    const response = await fetch(`api/items/${itemId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/items/${itemId}`, {
       method: 'DELETE',
       credentials: 'include',
     });

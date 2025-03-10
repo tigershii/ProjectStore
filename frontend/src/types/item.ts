@@ -4,5 +4,7 @@ export interface Item {
     price: number;
     description: string;
     images: string[];
-    sellerId: string;
+    available: boolean;
+    sellerId: number;
+    sellerUsername: string;
   }

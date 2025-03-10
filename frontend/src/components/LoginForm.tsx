@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label"
 import { useAuthActions } from "@/store/reducers/authReducer";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'; // Change this import
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/context/ToastContext";
 
 export function LoginForm({
   className,
@@ -25,22 +26,68 @@ export function LoginForm({
   const [password, setPassword] = useState('');
   const { login, signup } = useAuthActions();
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
-    const result = await login({username: username, password: password});
-    if (result.type === 'auth/login/fulfilled') {
-      router.push('/');
+    try {
+      const result = await login({username: username, password: password});
+      if (result.type === 'auth/login/fulfilled') {
+          toast({
+          type: 'success',
+          title: 'Login Successful',
+          message: 'You have been logged in successfully!',
+          duration: 2000
+        });
+        router.push('/');
+      } else {
+        toast({
+          type: 'error',
+          title: 'Login Failed',
+          message: 'Please check your credentials and try again.',
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      toast({
+        type: 'error',
+        title: 'Error',
+        message: 'An unexpected error occurred. Please try again.',
+        duration: 2000
+      });
+      throw error;
     }
-    setUsername('');
     setPassword('');
   }
 
   const handleSignup = async(e: React.FormEvent) => {
     e.preventDefault();
-    const result = await signup({username: username, password: password});
-    if (result.type === 'auth/signup/fulfilled') {
-      setIsSignup(false);
+    try {
+      const result = await signup({username: username, password: password});
+      if (result.type === 'auth/signup/fulfilled') {
+        toast({
+          type: 'success',
+          title: 'Signup Successful',
+          message: 'Your account has been created successfully!',
+          duration: 2000
+        });
+        setIsSignup(false);
+      } else {
+        toast({
+          type: 'error',
+          title: 'Signup Failed',
+          message: 'This username is already taken.',
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      toast({
+        type: 'error',
+        title: 'Error',
+        message: 'An unexpected error occurred. Please try again.',
+        duration: 2000
+      });
+      throw error;
     }
     setUsername('');
     setPassword('');
@@ -51,7 +98,7 @@ export function LoginForm({
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">{isSignup ? "Sign Up" : "Login"}</CardTitle>
         <CardDescription className="text-center">
-          {isSignup ? "Enter your email below to sign up for an account" : "Enter your email below to login to your account"}
+          {isSignup ? "Enter your credentials below to sign up for an account" : "Enter your credentials below to login to your account"}
         </CardDescription>
       </CardHeader>
       <CardContent>

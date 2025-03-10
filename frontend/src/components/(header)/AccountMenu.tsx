@@ -4,12 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useAuthActions } from "@/store/reducers/authReducer";
+import { useAuthActions, selectUser } from "@/store/reducers/authReducer";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 
 export default function AccountMenu() {
+  const user = useAppSelector(selectUser);
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
   const { logout } = useAuthActions();
+  
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -58,7 +63,7 @@ export default function AccountMenu() {
           <div className="relative rounded-md border border-neutral-200 bg-white text-neutral-950 shadow-md data-[state=open]:animate-in dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50">
             <div className="p-1">
               <Link
-                href="/userStore"
+                href={`/store/${user ? user.id : -1}`}
                 className="block select-none rounded-sm px-2 py-1.5 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300"
               >
                 My Store
@@ -71,6 +76,7 @@ export default function AccountMenu() {
               </Link>
               <button onClick={() => {
                 logout();
+                router.push('/');
               }} className="block select-none rounded-sm px-2 py-1.5 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300">
                 Logout
               </button>

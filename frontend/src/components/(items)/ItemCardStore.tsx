@@ -6,7 +6,12 @@ import Link from "next/link";
 import { deleteItem } from "@/lib/api/items";
 import { useRouter } from "next/navigation";
 
-export default function ItemCardStore({item} : {item: Item}) {
+interface Props {
+    item: Item;
+    isOwner: boolean;
+}
+
+export default function ItemCardStore({item, isOwner} : Props) {
     const router = useRouter();
     const { id, name, price, images } = item;
     if (images.length === 0) {
@@ -34,6 +39,7 @@ export default function ItemCardStore({item} : {item: Item}) {
                         <div className="pl-4">
                             <h1 className="text-md mb-2 text-black dark:text-white line-clamp-5">{name}</h1>
                             <p className="text-md text-black dark:text-white">Price: ${price.toFixed(2)}</p>
+                            {isOwner ?
                             <button onClick={(e) => {
                                 e.preventDefault();
                                 deleteItem(id);
@@ -41,6 +47,7 @@ export default function ItemCardStore({item} : {item: Item}) {
                             }} className="w-full text-sm underline text-black dark:text-white py-2 text-left">
                                 Remove
                             </button>
+                            : null }
                         </div>
                     </div>
                 </CardContent>

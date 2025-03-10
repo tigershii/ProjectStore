@@ -11,7 +11,7 @@ router.get('/verifySession', authenticateToken, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.status(200).json({ message: 'Session verified', user: { id: user.userId, username: user.username } });
+        res.status(200).json({ message: 'Session verified', user: { id: user.id, username: user.username } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Session verification failed' });
