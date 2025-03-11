@@ -45,9 +45,11 @@ router.get('/', async(req, res) => {
                     SELECT * 
                     FROM items 
                     WHERE 
+                        (
                         title ILIKE :searchPattern OR
                         description ILIKE :searchPattern OR
                         category ILIKE :searchPattern
+                        )
                         AND available = true
                     ORDER BY 
                         (CASE WHEN title ILIKE :searchPattern THEN 3 ELSE 0 END) +

@@ -9,13 +9,13 @@ import { ToastProvider } from "./ToastContext";
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <Provider store={store}>
-            <SessionProvider>
-                <ThemeProvider>
-                    <ToastProvider>
+            <ToastProvider>
+                <SessionProvider>
+                    <ThemeProvider>
                         {children}
-                    </ToastProvider>
-                </ThemeProvider>
-            </SessionProvider>
+                    </ThemeProvider>
+                </SessionProvider>
+            </ToastProvider>
         </Provider>
     );
 } 

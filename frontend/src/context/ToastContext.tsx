@@ -80,36 +80,32 @@ function Toast({ toast }: { toast: Toast }) {
     switch (type) {
       case 'success':
         return {
-          variant: "default" as const,
-          className: "border-green-500 bg-green-100 text-green-800 dark:border-green-500 dark:bg-green-800 dark:text-green-100",
+          variant: "success" as const,
           icon: <CheckCircle className="h-4 w-4 mr-2" />
         };
       case 'warning':
         return {
-          variant: "default" as const,
-          className: "border-amber-500 bg-amber-100 text-amber-800 dark:border-amber-500 dark:bg-amber-800 dark:text-amber-100",
+          variant: "warning" as const,
           icon: <AlertTriangle className="h-4 w-4 mr-2" />
         };
       case 'info':
         return {
-          variant: "default" as const,
-          className: "border-blue-500 bg-blue-100 text-blue-800 dark:border-blue-500 dark:bg-blue-800 dark:text-blue-100",
+          variant: "info" as const,
           icon: <Info className="h-4 w-4 mr-2" />
         };
       case 'error':
         return {
-          variant: "destructive" as const,
-          className: "border-red-500 bg-red-100 text-red-800 dark:border-red-500 dark:bg-red-800 dark:text-red-100",
+          variant: "error" as const,
           icon: <AlertCircle className="h-4 w-4 mr-2" />
         };
     }
   };
 
-  const { variant, className, icon } = getAlertProps();
+  const { variant, icon } = getAlertProps();
 
   return (
-    <div className="pointer-events-auto">
-      <Alert variant={variant} className={`${className} pr-8 shadow-md relative`}>
+    <div className="pointer-events-auto w-80">
+      <Alert variant={variant} className={`pr-8 shadow-md relative`}>
         <div className="flex items-start">
           {icon}
           <div>

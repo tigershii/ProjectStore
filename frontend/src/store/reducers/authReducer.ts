@@ -83,7 +83,7 @@ const authSlice = createSlice({
             state.loading = 'failed';
             state.isLoggedIn = false;
             state.user = null;
-            state.error = null; // No need to show error for session verification
+            state.error = null;
         });
     }
 })

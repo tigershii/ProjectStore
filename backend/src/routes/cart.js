@@ -35,6 +35,17 @@ router.post('/', authenticateToken, async(req, res) => {
         if (cart.items.includes(newId)) {
             return res.status(400).json({ message: 'Item already in cart' });
         }
+        const cachedItem = await getCachedItem(newId);
+        if (!cachedItem) {
+            const item = await Items.findOne({ where: { id: newId } });
+            if (!item) {
+                return res.status(404).json({ message: 'Item not found' });
+            }
+            await cacheItem(newId, item);
+        }
+        if (cachedItem.sellerId === userId) {
+            return res.status(400).json({ message: 'Cannot add own item to cart' });
+        }
         cart.items.push(newId);
         await cacheCart(userId, cart);
         res.status(201).json({ message: 'Cart saved successfully' });

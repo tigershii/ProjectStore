@@ -1,6 +1,6 @@
 const { getRedisClient, connectRedis } = require('./client');
 
-const USER_PREFIX = 'cart:'
+const USER_PREFIX = 'user:'
 const USER_TTL = 60*60*24*7;
 
 async function cacheUser(userId, username) {

@@ -16,7 +16,15 @@ async function getCachedCart(userId) {
   return cart ? JSON.parse(cart) : { items: [] };
 }
 
+async function clearCart(userId) {
+  const client = await getRedisClient();
+  await client.set(`${CART_PREFIX}${userId}`, JSON.stringify({ items: [] }), {
+    EX: CART_TTL
+  });
+}
+
 module.exports = {
   cacheCart,
-  getCachedCart
+  getCachedCart,
+  clearCart
 };

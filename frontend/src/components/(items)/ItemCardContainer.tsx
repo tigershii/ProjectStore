@@ -21,12 +21,17 @@ export default function ItemCardContainer({
     return (
         <div className="flex flex-col items-center w-full h-full">
             <div className="grid grid-cols-4 gap-4 py-4 px-6 w-full flex-1">
-                {items.map((item) => (
-                    <ItemCard 
-                    key={item.id}
-                    Item={item}
-                    />
-                ))}
+                {items.length === 0 ? 
+                    <p className="col-span-4">No items found.</p>
+                    : (
+                    items.map((item) => (
+                        <ItemCard 
+                        key={item.id}
+                        Item={item}
+                        />
+                    ))
+                    )
+                }
             </div>
             <Pagination className="flex justify-center">
                 <PaginationContent>

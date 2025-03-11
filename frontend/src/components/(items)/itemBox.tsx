@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Item } from "@/types/item";
 import ImageCarousel from "@/components/(items)/ImageCarousel";
 import { useCartActions } from "@/store/reducers/cartReducer";
+import { useAppSelector } from "@/store/hooks";
+import { selectUser } from "@/store/reducers/authReducer";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/context/ToastContext";
 
 export default function ItemBox({item} : {item: Item}) {
+  const user = useAppSelector(selectUser);
   const { toast } = useToast();
   const { addItemCart } = useCartActions();
   const router = useRouter();
@@ -26,9 +29,9 @@ export default function ItemBox({item} : {item: Item}) {
         router.push('/');
       } else {
         toast({
-          type: 'error',
+          type: 'warning',
           title: 'Item Not Added',
-          message: 'This item is already in your cart.',
+          message: 'This item could not be added to your cart.',
           duration: 2000
         })
       }
@@ -65,7 +68,7 @@ export default function ItemBox({item} : {item: Item}) {
               <p className="text-gray-700 dark:text-gray-300 mb-4">{item.description}</p>
               <p className="text-xl font-semibold mb-4 text-black dark:text-white">Price: ${item.price}</p>
               {item.available ?
-                <Button type="submit" onClick={handleAddToCart} className="w-full text-white dark:text-black py-2">
+                <Button type="submit" onClick={handleAddToCart} disabled={user?.id === item.sellerId} className="w-full text-white dark:text-black py-2">
                   Add to Cart
                 </Button>
                 :
