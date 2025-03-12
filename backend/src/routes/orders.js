@@ -10,9 +10,35 @@ const sequelize = require('../db');
 
 router.get('/', authenticateToken, async(req, res) => {
     const userId = req.user.userId;
-    const orders = await Orders.findAll({
-        where: { buyerId: userId }
+    let orders = await Orders.findAll({
+        where: { buyerId: userId },
+        order: [['orderDate', 'DESC']]
     });
+    const orderPromises = orders.map(async(order) => {
+        const orderId = order.id;
+        const itemIds = await OrderItems.findAll({
+            attributes: ['itemId'],
+            where: { orderId: orderId },
+        });
+        const itemPromises = itemIds.map(async(item) => {
+            const itemId = item.itemId;
+            const cachedItem = await getCachedItem(itemId);
+            if (cachedItem) {
+                return cachedItem;
+            }
+            return await Items.findOne({ where: { id: itemId } });
+        });
+        const items = await Promise.all(itemPromises);
+        order.dataValues.items = items;
+        const newOrder = {
+            id: order.id,
+            total: order.totalAmount,
+            orderDate: order.orderDate,
+            items: items
+        }
+        return newOrder;
+    });
+    orders = await Promise.all(orderPromises);
     res.status(200).json({ orders });
 });
 
@@ -35,7 +61,7 @@ router.post('/', authenticateToken, async(req, res) => {
             if (cachedItem) {
                 return cachedItem;
             }
-            return await Items.findOne({ where: { id: itemId } });
+            return await Items.findOne({ where: { id: itemId, available: true } });
         });
 
         const items = await Promise.all(itemPromises);

@@ -23,7 +23,7 @@ export default function Header() {
 
                 <ul className="hidden md:flex items-center gap-10">
                     <li>
-                        <Link href="/">Home</Link> 
+                        <Link href="/" className="hover:text-gray-600 dark:hover:text-gray-300">Home</Link> 
                     </li>
                     <li>
                         <CategoryMenu />

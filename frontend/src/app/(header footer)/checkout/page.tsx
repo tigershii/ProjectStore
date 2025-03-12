@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import { selectCartItems, selectCartTotalPrice } from "@/store/reducers/cartReducer";
 import ItemCardCheckout from "@/components/(items)/ItemCardCheckout";
@@ -10,6 +11,7 @@ import { useCartActions } from "@/store/reducers/cartReducer";
 import { useToast } from "@/context/ToastContext";
 
 export default function Checkout() {
+  const router = useRouter();
   const { fetchCart } = useCartActions();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
@@ -61,7 +63,6 @@ export default function Checkout() {
           duration: 5000
         });
         
-        // Refresh the cart after checkout
         await fetchCart();
       } else {
         throw new Error(result.message || 'Failed to place order');
@@ -90,9 +91,9 @@ export default function Checkout() {
       ) : cartItems.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-lg">Your cart is empty.</p>
-          <Button 
-            onClick={() => window.location.href = '/'}
-            className="mt-4 bg-primary-light dark:bg-primary-dark"
+          <Button
+            onClick={() => router.push("/")}
+            className="mt-4 bg-secondary-light dark:bg-secondary-dark"
           >
             Continue Shopping
           </Button>

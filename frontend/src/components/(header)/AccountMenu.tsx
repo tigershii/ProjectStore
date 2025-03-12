@@ -69,10 +69,10 @@ export default function AccountMenu() {
                 My Store
               </Link>
               <Link
-                href="/my-orders"
+                href="/orders"
                 className="block select-none rounded-sm px-2 py-1.5 text-sm font-medium hover:text-gray-600 dark:hover:text-gray-300"
               >
-                My Purchases
+                My Orders
               </Link>
               <button onClick={() => {
                 logout();
