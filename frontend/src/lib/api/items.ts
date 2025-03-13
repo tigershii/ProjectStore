@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export async function getItems(page: number, category?: string, search?: string) {
   try {
@@ -9,6 +9,7 @@ export async function getItems(page: number, category?: string, search?: string)
     } else if (search) {
       url.searchParams.append('search', search);
     }
+    console.log(url.toString());
     
     const response = await fetch(url.toString(), {
       method: 'GET',

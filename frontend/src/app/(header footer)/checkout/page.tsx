@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { createOrder } from "@/lib/api/orders";
 import { useCartActions } from "@/store/reducers/cartReducer";
 import { useToast } from "@/context/ToastContext";
+import { selectLoggedIn } from "@/store/reducers/authReducer";
 
 export default function Checkout() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function Checkout() {
   
   const cartItems = useAppSelector(selectCartItems);
   const cartTotalPrice = useAppSelector(selectCartTotalPrice);
+  const isLoggedIn = useAppSelector(selectLoggedIn);
   
   useEffect(() => {
     let isMounted = true;
@@ -79,6 +81,12 @@ export default function Checkout() {
       setIsLoading(false);
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="container mx-auto py-8 text-center"> Please log in to checkout. </div>
+    )
+  }
 
   return (
     <div className="container mx-auto py-8">

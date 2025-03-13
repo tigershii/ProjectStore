@@ -1,0 +1,68 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: project-store-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    env_file: "docker.env"
+    environment:
+      - PORT=3000
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
+
+  
+  backend:
+    build: ./backend
+    container_name: project-store-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: "docker.env"
+    environment:
+      - PORT=8080
+    # volumes:
+    #   - ./backend:/app
+    #   - /app/node_modules
+
+  database:
+    image: postgres:16
+    container_name: project-store-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=projectStoreDB
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  redis:
+    image: redis:7-alpine
+    container_name: project-store-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres:
+  redis:

@@ -5,9 +5,9 @@ import { Item } from "@/types/item";
 import CreateItemMenu from "@/components/(items)/CreateItemMenu";
 
 interface Props {
-  params: {
-    id: number;
-  }
+  params: Promise<{
+    id: number
+  }>
 }
 
 export default async function Store({ params }: Props) {
@@ -17,14 +17,14 @@ export default async function Store({ params }: Props) {
 
   let items = [] as Item[];
   let isOwner = false;
-  let username = 'Your';
+  let username = '';
   let hasError = false;
 
   try {
     const response = await getUserItems(id, token?.value);
     items = response.items;
     isOwner = response.isOwner;
-    username = response.username;
+    username = response.username + '\'s';
   } catch (error) {
     console.error("Failed to fetch user items:", error);
     hasError = true;
@@ -33,7 +33,7 @@ export default async function Store({ params }: Props) {
   if (hasError) {
     return (
       <div className="container mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-4">{isOwner ? 'Your Listings' : `${username}'s Listings`}</h1>
+        <h1 className="text-2xl font-bold mb-4">{isOwner ? 'Your Listings' : `${username} Listings`}</h1>
         <p className="text-md mb-4">Unable to load your items at this time, please try again later.</p>
       </div>
     );

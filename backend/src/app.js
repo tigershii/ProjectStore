@@ -10,7 +10,7 @@ const { syncDatabase } = require('./db');
 const { connectRedis } = require('./redis/client');
 
 dotenv.config()
-var port = process.env.PORT || 6000;
+var port = process.env.PORT || 8080
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');

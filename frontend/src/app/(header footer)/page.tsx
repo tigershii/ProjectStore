@@ -1,13 +1,12 @@
-//import Image from "next/image";
 import ItemCardContainer from "@/components/(items)/ItemCardContainer";
 import { getItems } from "@/lib/api/items";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     page?: string,
     category?: string,
     search?: string
-  };
+  }>
 }
 
 export default async function Home({ searchParams }: Props) {

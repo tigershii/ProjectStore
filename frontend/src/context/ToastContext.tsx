@@ -39,6 +39,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         removeToast(id);
       }, toast.duration);
     }
+    // eslint-disable-next-line
   }, []);
 
   const removeToast = useCallback((id: string) => {

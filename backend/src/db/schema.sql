@@ -14,14 +14,14 @@ CREATE TABLE items (
     category TEXT,
     seller_id INTEGER NOT NULL,
     available BOOLEAN DEFAULT true,
-    buyer_id VARCHAR(255),
+    buyer_id INTEGER,
     views INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE orders (
     order_id SERIAL PRIMARY KEY,
-    buyer_id VARCHAR(255) NOT NULL,
+    buyer_id INTEGER NOT NULL,
     order_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(10,2) NOT NULL
 );

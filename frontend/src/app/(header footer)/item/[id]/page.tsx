@@ -2,15 +2,14 @@ import ItemBox from "@/components/(items)/ItemBox";
 import { getItem } from "@/lib/api/items";
 
 interface Props {
-  params: {
-    id: number;
-  };
+  params: Promise<{id: string}>
 }
 
 export default async function ItemPage({ params }: Props) {
   const { id } = await params;
+  const itemId = parseInt(id);
   try {
-    const item = await getItem(id);
+    const item = await getItem(itemId);
 
     if (!item) {
       return <div>Item not found</div>;

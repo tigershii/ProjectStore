@@ -1,0 +1,8 @@
+# Backend .dockerignore
+**/node_modules
+**/.env
+**/.gitignore
+**/.git
+**/.DS_STORE
+**/.dockerignore
+**/Dockerfile

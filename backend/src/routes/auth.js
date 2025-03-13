@@ -28,7 +28,6 @@ router.get('/allUsers', async (req, res) => {
     }
 });
 
-// User is database, not implemented yet
 router.post('/signup', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -47,7 +46,6 @@ router.post('/signup', async (req, res) => {
             password: hashedPassword,
         };
 
-       // await newUser.save();
         await Users.create(newUser);
         res.status(201).json({ message: 'User registered successfully', username: newUser.username });
     } catch (error) {
@@ -59,7 +57,7 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async(req, res) => {
     try {
         const { username, password} = req.body;
-        //change later
+
         const user = await Users.findOne({ where: { username } });
         console.log(user || "User not found");
         if (!user) {
@@ -68,7 +66,6 @@ router.post('/login', async(req, res) => {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         
-        // change to isPasswordValid
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password' });
         }
