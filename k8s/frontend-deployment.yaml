@@ -1,89 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.35.0 (HEAD)
   labels:
-    io.kompose.service: frontend
+    app: frontend
   name: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: frontend
+      app: frontend
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.35.0 (HEAD)
       labels:
-        io.kompose.service: frontend
+        app: frontend
     spec:
       containers:
-        - env:
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                configMapKeyRef:
-                  key: AWS_ACCESS_KEY_ID
-                  name: docker-env
-            - name: AWS_REGION
-              valueFrom:
-                configMapKeyRef:
-                  key: AWS_REGION
-                  name: docker-env
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                configMapKeyRef:
-                  key: AWS_SECRET_ACCESS_KEY
-                  name: docker-env
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_HOST
-                  name: docker-env
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_NAME
-                  name: docker-env
-            - name: DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_PASSWORD
-                  name: docker-env
-            - name: DB_USER
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_USER
-                  name: docker-env
-            - name: JWT_SECRET
-              valueFrom:
-                configMapKeyRef:
-                  key: JWT_SECRET
-                  name: docker-env
-            - name: NEXT_PUBLIC_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: NEXT_PUBLIC_API_URL
-                  name: docker-env
-            - name: PORT
-              value: "3000"
-            - name: REDIS_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: REDIS_URL
-                  name: docker-env
-            - name: S3_BUCKET_NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: S3_BUCKET_NAME
-                  name: docker-env
-            - name: S3_PUBLIC_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: S3_PUBLIC_URL
-                  name: docker-env
+        - envFrom:
+            - configMapRef:
+                name: config
           image: frontend
           name: project-store-frontend
           ports:
