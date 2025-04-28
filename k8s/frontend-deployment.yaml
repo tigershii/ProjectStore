@@ -15,12 +15,17 @@ spec:
         app: frontend
     spec:
       containers:
-        - envFrom:
-            - configMapRef:
-                name: config
-          image: frontend
+        - env:
+            - name: NEXT_PUBLIC_BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: BACKEND_URL
+                  name: config
+          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend:1.0
           name: project-store-frontend
           ports:
             - containerPort: 3000
               protocol: TCP
+      imagePullSecrets:
+        - name: gcp-artifact-registry
       restartPolicy: Always

@@ -21,9 +21,15 @@ spec:
             - name: POSTGRES_DB
               value: projectStoreDB
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: database-secret
             - name: POSTGRES_USER
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  key: DB_USER
+                  name: database-secret
           image: postgres:16
           livenessProbe:
             exec:

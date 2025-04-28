@@ -3,10 +3,9 @@ kind: ConfigMap
 metadata:
   name: config
 data:
-  JWT_SECRET: FwQ1mY9nL3rX8tZpCv7kJbGhDs0qWxUoEi2aOcKjIv54HyTp6nAmQlKfRgVhNzYx
   DB_USER: postgres
   DB_HOST: database
   DB_PASSWORD: postgres
   DB_NAME: projectStoreDB
   REDIS_URL: http://redis.default.svc.cluster.local:6379
-  NEXT_PUBLIC_API_URL: http://backend.default.svc.cluster.local:8080
+  BACKEND_URL: http://backend.default.svc.cluster.local:8080
