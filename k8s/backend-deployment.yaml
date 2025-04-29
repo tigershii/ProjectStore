@@ -24,7 +24,7 @@ spec:
                 name: database-secret
             - secretRef:
                   name: jwt-secret
-          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/backend:1.0
+          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/backend:1.6
           name: project-store-backend
           ports:
             - containerPort: 8080

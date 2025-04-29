@@ -3,9 +3,6 @@ kind: ConfigMap
 metadata:
   name: config
 data:
-  DB_USER: postgres
-  DB_HOST: database
-  DB_PASSWORD: postgres
-  DB_NAME: projectStoreDB
-  REDIS_URL: http://redis.default.svc.cluster.local:6379
+  REDIS_HOST: redis.default.svc.cluster.local
+  REDIS_PORT: "6379"
   BACKEND_URL: http://backend.default.svc.cluster.local:8080

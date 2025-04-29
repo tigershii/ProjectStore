@@ -12,9 +12,8 @@ node_modules
 
 # production
 /build
-
+/k8s
 # misc
-/k8s/secrets.yaml
 .DS_Store
 .env.local
 .env.development.local

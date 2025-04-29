@@ -38,10 +38,21 @@ spec:
             - containerPort: 6379
               protocol: TCP
           volumeMounts:
-            - mountPath: /data
-              name: redis
+          - name: data
+            mountPath: /redis-master-data
+          - name: redis-config
+            mountPath: /redis-master
       restartPolicy: Always
       volumes:
-        - name: redis
-          persistentVolumeClaim:
-            claimName: redis
+      - name: redis-config
+        configMap:
+           name: redis-config
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  maxmemory : 2mb

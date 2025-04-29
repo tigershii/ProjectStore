@@ -16,12 +16,12 @@ spec:
     spec:
       containers:
         - env:
-            - name: NEXT_PUBLIC_BACKEND_URL
+            - name: NEXT_PUBLIC_API_URL
               valueFrom:
                 configMapKeyRef:
                   key: BACKEND_URL
                   name: config
-          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend:1.0
+          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend:1.2
           name: project-store-frontend
           ports:
             - containerPort: 3000

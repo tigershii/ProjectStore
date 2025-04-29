@@ -19,7 +19,10 @@ spec:
       containers:
         - env:
             - name: POSTGRES_DB
-              value: projectStoreDB
+              valueFrom:
+                secretKeyRef:
+                  key: DB_NAME
+                  name: database-secret
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -31,22 +34,22 @@ spec:
                   key: DB_USER
                   name: database-secret
           image: postgres:16
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready -U postgres
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - pg_isready -U postgres
+          #   failureThreshold: 5
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
           name: project-store-postgres
           ports:
             - containerPort: 5432
               protocol: TCP
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgres
+          # volumeMounts:
+          #   - mountPath: /var/lib/postgresql/data
+          #     name: postgres
       restartPolicy: Always
-      volumes:
-        - name: postgres
-          persistentVolumeClaim:
-            claimName: postgres
+      # volumes:
+      #   - name: postgres
+      #     persistentVolumeClaim:
+      #       claimName: postgres
