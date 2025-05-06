@@ -1,9 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
 export const verifySession = createAsyncThunk('auth/verifySession', async () => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/verifySession`, {
+    const response = await fetch(`/api/auth/verifySession`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -16,11 +14,12 @@ export const verifySession = createAsyncThunk('auth/verifySession', async () => 
     }
     
     const data = await response.json();
+
     return data.user;
 });
 
 export const login = createAsyncThunk('auth/login', async (credentials: { username: string, password: string }) => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`/api/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -36,7 +35,7 @@ export const login = createAsyncThunk('auth/login', async (credentials: { userna
 })
 
 export const signup = createAsyncThunk('auth/signup', async (credentials: { username: string, password: string }) => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+    const response = await fetch(`/api/auth/signup`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -52,7 +51,8 @@ export const signup = createAsyncThunk('auth/signup', async (credentials: { user
 })
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+
+    const response = await fetch(`/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
     });

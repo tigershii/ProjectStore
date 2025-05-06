@@ -70,7 +70,7 @@ export async function getUserItems(userId: number, token?: string) {
 
 export async function createItem({name, price, description, category, images}: {name: string, price: number, description: string, category: string, images: string[]}) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/items`, {
+    const response = await fetch(`/api/items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export async function createItem({name, price, description, category, images}: {
 export async function deleteItem(itemId: number) {
   console.log('deleteItem', itemId);
   try {
-    const response = await fetch(`${API_BASE_URL}/api/items/${itemId}`, {
+    const response = await fetch(`/api/items/${itemId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -101,7 +101,7 @@ export async function deleteItem(itemId: number) {
 
 export async function getPresignedUrls(fileCount: number, fileTypes: string[]) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/items/presignedURL`, {
+    const response = await fetch(`/api/items/presignedURL`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
