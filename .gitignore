@@ -9,7 +9,7 @@ node_modules
 
 # testing
 /coverage
-
+/k8s/app/repo.yaml
 /k8s/configs/secrets.yaml
 # production
 /build
