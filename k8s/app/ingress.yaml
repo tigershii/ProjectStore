@@ -4,7 +4,7 @@ metadata:
   name: ingress
   namespace: app
 spec:
-  ingressClassName: cilium
+  ingressClassName: nginx
   rules:
   - http:
       paths:

@@ -10,24 +10,47 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        app: frontend
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s-app: kube-dns
     toPorts:
     - ports:
-      - port: "3000"
+      - port: "53"
+        protocol: UDP
+      - port: "53"
         protocol: TCP
+
   - toServices:
-    - k8sService:
-        serviceName: frontend
-        namespace: app
     - k8sService:
         serviceName: database-cluster-r
         namespace: database
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+
+  - toServices:
     - k8sService:
         serviceName: database-cluster-ro
         namespace: database
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+  
+  - toServices:
     - k8sService:
         serviceName: database-cluster-rw
         namespace: database
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+
+  - toServices:
     - k8sService:
         serviceName: dragonfly
         namespace: dragonfly
+    toPorts:
+    - ports:
+      - port: "6379"
+        protocol: TCP

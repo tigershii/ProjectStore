@@ -14,5 +14,5 @@ spec:
         app: backend
     toPorts:
     - ports:
-      - port: "6379"
+      - port: "5432"
         protocol: TCP
