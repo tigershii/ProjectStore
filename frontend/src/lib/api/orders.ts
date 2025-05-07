@@ -1,8 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://backend:8080';
 
 export async function getOrders() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/orders`, {
+        const response = await fetch(`/api/orders`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -14,7 +13,7 @@ export async function getOrders() {
 
 export async function createOrder() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/orders`, {
+        const response = await fetch(`/api/orders`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

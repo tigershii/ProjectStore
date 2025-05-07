@@ -1,0 +1,33 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: backend-netpol
+  namespace: app
+spec:
+  endpointSelector:
+    matchLabels:
+      app: backend
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app: frontend
+    toPorts:
+    - ports:
+      - port: "3000"
+        protocol: TCP
+  - toServices:
+    - k8sService:
+        serviceName: frontend
+        namespace: app
+    - k8sService:
+        serviceName: database-cluster-r
+        namespace: database
+    - k8sService:
+        serviceName: database-cluster-ro
+        namespace: database
+    - k8sService:
+        serviceName: database-cluster-rw
+        namespace: database
+    - k8sService:
+        serviceName: dragonfly
+        namespace: dragonfly

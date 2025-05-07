@@ -1,0 +1,15 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+  namespace: dragonfly
+spec:
+  imagePullPolicy: IfNotPresent
+  replicas: 3
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 300m
+      memory: 300Mi

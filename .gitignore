@@ -10,9 +10,9 @@ node_modules
 # testing
 /coverage
 
+/k8s/configs/secrets.yaml
 # production
 /build
-/k8s
 # misc
 .DS_Store
 .env.local
