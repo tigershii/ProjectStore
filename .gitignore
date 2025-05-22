@@ -9,8 +9,9 @@ node_modules
 
 # testing
 /coverage
-/k8s/app/repo.yaml
-/k8s/configs/secrets.yaml
+/kubernetes/app/repo.yaml
+/kubernetes/configs/secrets.yaml
+/kubernetes/kind-config
 # production
 /build
 # misc

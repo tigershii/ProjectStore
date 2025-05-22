@@ -1,8 +1,0 @@
-services:
-  frontend:
-    build: ./frontend
-    container_name: project-store-frontend
-  
-  backend:
-    build: ./backend
-    container_name: project-store-backend
