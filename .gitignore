@@ -12,6 +12,7 @@ node_modules
 /kubernetes/app/repo.yaml
 /kubernetes/configs/secrets.yaml
 /kubernetes/kind-config
+/kubernetes/configs/gcp-artifact-registry.yaml
 # production
 /build
 # misc

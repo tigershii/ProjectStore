@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: database-cluster
+  namespace: flux-system
+spec:
+  path: ./kubernetes/database/cluster
+  targetNamespace: database
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: lab-repository
+  wait: true
+  interval: 10m
