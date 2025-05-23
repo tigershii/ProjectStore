@@ -1,0 +1,25 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: image-update
+  namespace: app
+spec:
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: FluxCD Bot
+      messageTemplate: 'Update images for {{range .Updated.Images}}{{.Repository}}:{{.Tag}} {{end}}'
+    push:
+      branch: main
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  update:
+    path: ./kubernetes/app
+    strategy: Setters

@@ -7,5 +7,5 @@ spec:
   imageRepositoryRef:
     name: frontend
   policy:
-    numerical:
-      order: asc
+    semver:
+      range: ">=1.0.0"
