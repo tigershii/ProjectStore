@@ -1,16 +1,17 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cnpg-system-cloudnative-pg
+  name: app
   namespace: flux-system
 spec:
-  path: ./kubernetes/cnpg-system/cloudnative-pg/app
+  targetNamespace: app
+  path: ./kubernetes/app
   sourceRef:
     kind: GitRepository
     name: flux-system
   commonMetadata:
     labels:
-      app.kubernetes.io/name: cloudnative-pg
+      app.kubernetes.io/name: app
   prune: false
   wait: true
   interval: 10m

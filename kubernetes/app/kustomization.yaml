@@ -3,10 +3,5 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./quota.yaml
-  - ./backend/backend-deployment.yaml
-  - ./backend/backend-service.yaml
-  - ./frontend/frontend-deployment.yaml
-  - ./frontend/frontend-service.yaml
-  - ./backend/backend-hpa.yaml
-  - ./frontend/frontend-hpa.yaml
   - ./ingress.yaml
+  - ./ks.yaml
