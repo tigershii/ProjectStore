@@ -18,7 +18,6 @@ spec:
         protocol: UDP
       - port: "53"
         protocol: TCP
-
   - toServices:
     - k8sService:
         serviceName: database-cluster-r
@@ -27,7 +26,6 @@ spec:
     - ports:
       - port: "5432"
         protocol: TCP
-
   - toServices:
     - k8sService:
         serviceName: database-cluster-ro
@@ -36,7 +34,6 @@ spec:
     - ports:
       - port: "5432"
         protocol: TCP
-  
   - toServices:
     - k8sService:
         serviceName: database-cluster-rw
