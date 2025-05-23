@@ -12,7 +12,8 @@ spec:
       author:
         email: fluxcdbot@users.noreply.github.com
         name: FluxCD Bot
-      messageTemplate: '{{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}'
+      messageTemplate: |
+        Automated image update by Flux
     push:
       branch: main
   interval: 10m
