@@ -24,8 +24,8 @@ spec:
             - secretRef:
                 name: database-secret
             - secretRef:
-                  name: jwt-secret
-          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/backend:2.0.0 # {"$imagepolicy": "app:backend"}
+                name: jwt-secret
+          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/backend:2.0.1 # {"$imagepolicy": "app:backend"}
           name: project-store-backend
           ports:
             - containerPort: 8080
