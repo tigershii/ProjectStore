@@ -1,0 +1,10 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: frontend
+  namespace: app
+spec:
+  image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend
+  interval: 10m
+  secretRef:
+    name: gcp-artifact-registry
