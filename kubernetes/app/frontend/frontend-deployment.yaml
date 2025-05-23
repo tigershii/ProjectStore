@@ -19,7 +19,7 @@ spec:
         - env:
             - name: NEXT_PUBLIC_API_URL
               value: http://backend.app.svc.cluster.local:8080
-          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend:2.0.1 # {"$imagepolicy": "app:frontend"}
+          image: us-west1-docker.pkg.dev/kubernetes-cluster-458203/project-store/frontend:2.0.2 # {"$imagepolicy": "app:frontend"}
           name: project-store-frontend
           ports:
             - containerPort: 3000
