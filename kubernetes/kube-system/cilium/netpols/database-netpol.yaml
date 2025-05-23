@@ -15,6 +15,8 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: cnpg-system
         app.kubernetes.io/name: cloudnative-pg
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: database
     toPorts:
     - ports:
       - port: "5432"
