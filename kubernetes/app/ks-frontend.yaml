@@ -1,17 +1,17 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: database-cluster
+  name: app
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cnpg-system
-      namespace: flux-system
-  path: ./kubernetes/database/cluster
-  targetNamespace: database
-  prune: true
+  targetNamespace: app
+  path: ./kubernetes/app/frontend
   sourceRef:
     kind: GitRepository
     name: flux-system
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: app
+  prune: false
   wait: true
   interval: 10m

@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: app
-  path: ./kubernetes/app
+  path: ./kubernetes/app/backend
   sourceRef:
     kind: GitRepository
     name: flux-system
