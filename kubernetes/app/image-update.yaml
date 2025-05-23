@@ -22,4 +22,4 @@ spec:
     namespace: flux-system
   update:
     path: ./kubernetes/app
-    strategy: ImageTag
+    strategy: Setters
