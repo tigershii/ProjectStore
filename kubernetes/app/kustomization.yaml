@@ -6,3 +6,4 @@ resources:
   - ./ingress.yaml
   - ./ks-frontend.yaml
   - ./ks-backend.yaml
+  - ./image-update.yaml
