@@ -50,24 +50,28 @@ pipeline {
                             env.IS_RELEASE_BUILD = 'true'
                             echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
                         } else {
-                            // Get commit message
                             def commitMessage = sh(script: 'git log -1 --pretty=%B || echo "No commit message"', returnStdout: true).trim()
                             echo "Commit message: ${commitMessage}"
                             
-                            // Simple version extraction using indexOf and substring
                             def versionPrefix = "version:"
                             def versionIdx = commitMessage.toLowerCase().indexOf(versionPrefix)
                             
                             if (versionIdx >= 0) {
-                                // Extract version after "version:" prefix
                                 def afterPrefix = commitMessage.substring(versionIdx + versionPrefix.length()).trim()
                                 def endIdx = afterPrefix.indexOf(' ')
-                                if (endIdx < 0) endIdx = afterPrefix.length()
                                 
-                                env.IMAGE_VERSION = afterPrefix.substring(0, endIdx).trim()
-                                echo "Found version in commit message: ${env.IMAGE_VERSION}"
+                                if (endIdx < 0) {
+                                    endIdx = afterPrefix.length()
+                                }
                                 
-                                // Check for release flag
+                                if (endIdx > 0) {
+                                    env.IMAGE_VERSION = afterPrefix.substring(0, endIdx).trim()
+                                    echo "Found version in commit message: ${env.IMAGE_VERSION}"
+                                } else {
+                                    env.IMAGE_VERSION = "0.1.0-dev.${env.BUILD_NUMBER}"
+                                    echo "Invalid version format in commit message, using default: ${env.IMAGE_VERSION}"
+                                }
+                                
                                 if (commitMessage.toLowerCase().contains("[release=true]") || 
                                     commitMessage.toLowerCase().contains("[release:true]")) {
                                     env.IS_RELEASE_BUILD = 'true'
@@ -77,7 +81,6 @@ pipeline {
                                     echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
                                 }
                             } else {
-                                // Default versioning
                                 sh(script: 'git fetch --tags || true')
                                 def latestTag = sh(script: 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"', returnStdout: true).trim()
                                 
@@ -113,7 +116,7 @@ pipeline {
                         sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
-                    docker.withRegistry("https://${env.GAR_LOCATION}-docker.pkg.dev", '') { // No specific Jenkins credential needed here if gcloud auth configure-docker is used
+                    docker.withRegistry("https://${env.GAR_LOCATION}-docker.pkg.dev", '') {
                         def customImage = docker.build(fullImageWithTag, "-f backend/Dockerfile backend/")
                         customImage.push()
                         echo "Pushed Backend image: ${fullImageWithTag}"
