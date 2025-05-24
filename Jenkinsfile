@@ -59,11 +59,7 @@ pipeline {
         stage('Build & Push Backend') {
             when {
                 expression {
-                    return env.IS_RELEASE_BUILD == 'true' || (currentBuild.changeSets.flatten().any { changeSet ->
-                        changeSet.affectedFiles.any { affectedFile ->
-                            affectedFile.path.startsWith('backend/')
-                        }
-                    } && env.IS_RELEASE_BUILD == 'false')
+                    return hasBackendChanges()
                 }
             }
             steps {
@@ -89,11 +85,15 @@ pipeline {
         stage('Build & Push Frontend') {
             when {
                 expression {
-                    return env.IS_RELEASE_BUILD == 'true' || (currentBuild.changeSets.flatten().any { changeSet ->
-                        changeSet.affectedFiles.any { affectedFile ->
-                            affectedFile.path.startsWith('frontend/')
-                        }
-                    } && env.IS_RELEASE_BUILD == 'false')
+                    return env.IS_RELEASE_BUILD == 'true' || (
+                        currentBuild.changeSets.any { changeSet ->
+                            changeSet.items.any { item ->
+                                item.affectedPaths.any { path ->
+                                    path.startsWith('frontend/')
+                                }
+                            }
+                        } && env.IS_RELEASE_BUILD == 'false'
+                    )
                 }
             }
             steps {
@@ -174,6 +174,34 @@ pipeline {
                 to: "${env.EMAIL_RECIPIENTS}",
                 attachLog: true
             )
+        }
+    }
+}
+
+def hasBackendChanges() {
+    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
+        return true
+    }
+    
+    return currentBuild.changeSets.any { changeSet ->
+        changeSet.items.any { item ->
+            item.affectedPaths.any { path ->
+                path.startsWith('backend/')
+            }
+        }
+    }
+}
+
+def hasFrontendChanges() {
+    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
+        return true
+    }
+    
+    return currentBuild.changeSets.any { changeSet ->
+        changeSet.items.any { item ->
+            item.affectedPaths.any { path ->
+                path.startsWith('frontend/')
+            }
         }
     }
 }

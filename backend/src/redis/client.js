@@ -12,6 +12,7 @@ async function connectRedis() {
       console.error('Redis connection error:', err);
     });
 
+    
     await redisClient.connect();
     console.log('Connected to Redis successfully');
     return redisClient;
