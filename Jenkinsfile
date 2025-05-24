@@ -2,6 +2,7 @@
 pipeline {
     agent any
 
+
     environment {
         GCP_PROJECT_ID           = 'kubernetes-cluster-458203'
         GAR_LOCATION             = 'us-west1'
