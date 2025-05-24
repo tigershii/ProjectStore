@@ -44,38 +44,64 @@ pipeline {
         stage('Determine Version') {
             steps {
                 script {
-                    if (env.TAG_NAME) {
-                        env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
-                        env.IS_RELEASE_BUILD = 'true'
-                        echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
-                    } else {
-                        def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
-                        def versionPattern = /version[:=]\s*([0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.]+)?)/
-                        def releasePattern = /\[release[=:]\s*(true|false)\]/i
-                                        
-                        def versionMatcher = commitMessage =~ versionPattern
-                        def releaseMatcher = commitMessage =~ releasePattern
-
-                        if (versionMatcher.find()) {
-                            env.IMAGE_VERSION = versionMatcher[0][1]
-                            
-                            if (releaseMatcher.find() && releaseMatcher[0][1].toLowerCase() == 'true') {
-                                env.IS_RELEASE_BUILD = 'true'
-                                echo "Release Build from commit message. Version: ${env.IMAGE_VERSION}"
-                            } else {
-                                env.IS_RELEASE_BUILD = 'false'
-                                echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
-                            }
+                    try {
+                        if (env.TAG_NAME) {
+                            env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
+                            env.IS_RELEASE_BUILD = 'true'
+                            echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
                         } else {
-                            sh(script: 'git fetch --tags || true')
-                            def latestTagCommand = 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"'
-                            def latestTag = sh(script: latestTagCommand, returnStdout: true).trim()
+                            def commitMessage = sh(script: 'git log -1 --pretty=%B || echo "No commit message"', returnStdout: true).trim()
                             
-                            def baseVersion = latestTag.replace("v", "")
-                            env.IMAGE_VERSION = "${baseVersion}-dev.${env.BUILD_NUMBER}.${env.GIT_COMMIT_SHORT}"
-                            echo "Using generated version: ${env.IMAGE_VERSION}"
+                            def versionPattern = /version[:=]\s*([0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.]+)?)/
+                            def releasePattern = /\[release[=:]\s*(true|false)\]/i
+                            
+                            def versionMatcher = null
+                            def releaseMatcher = null
+                            
+                            try {
+                                versionMatcher = commitMessage =~ versionPattern
+                                releaseMatcher = commitMessage =~ releasePattern
+                            } catch (Exception e) {
+                                echo "Error matching patterns: ${e.message}"
+                            }
+                            
+                            if (versionMatcher != null && versionMatcher.find()) {
+                                env.IMAGE_VERSION = versionMatcher[0][1]
+                                
+                                if (releaseMatcher != null && releaseMatcher.find() && 
+                                    releaseMatcher[0].size() > 1 && 
+                                    releaseMatcher[0][1].toLowerCase() == 'true') {
+                                    env.IS_RELEASE_BUILD = 'true'
+                                    echo "Release Build from commit message. Version: ${env.IMAGE_VERSION}"
+                                } else {
+                                    env.IS_RELEASE_BUILD = 'false'
+                                    echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
+                                }
+                            } else {
+                                sh(script: 'git fetch --tags || true')
+                                
+                                def latestTag = ""
+                                try {
+                                    latestTag = sh(script: 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"', returnStdout: true).trim()
+                                } catch (Exception e) {
+                                    echo "Error getting latest tag: ${e.message}"
+                                    latestTag = "v0.1.0"
+                                }
+                                
+                                def baseVersion = latestTag.replace("v", "")
+                                env.IMAGE_VERSION = "${baseVersion}-dev.${env.BUILD_NUMBER}.${env.GIT_COMMIT_SHORT}"
+                                echo "Using generated version: ${env.IMAGE_VERSION}"
+                            }
+                            
+                            if (env.IS_RELEASE_BUILD != 'true') {
+                                env.IS_RELEASE_BUILD = 'false'
+                            }
                         }
+                    } catch (Exception e) {
+                        echo "Error in Determine Version stage: ${e.message}"
+                        env.IMAGE_VERSION = "0.0.0-error.${env.BUILD_NUMBER}"
                         env.IS_RELEASE_BUILD = 'false'
+                        echo "Using fallback version due to error: ${env.IMAGE_VERSION}"
                     }
                 }
             }
