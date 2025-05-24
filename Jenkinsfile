@@ -46,12 +46,16 @@ pipeline {
                     if (env.TAG_NAME) {
                         env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
                         env.IS_RELEASE_BUILD = 'true'
-                        echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
                     } else {
-                        env.IMAGE_VERSION = "dev-${env.BRANCH_NAME.replaceAll('/', '-')}-${env.BUILD_NUMBER}-${env.GIT_COMMIT_SHORT}"
+                        sh(script: 'git fetch --tags')
+                        def latestTag = sh(script: 'git describe --tags --abbrev=0 || echo "v0.0.0"', returnStdout: true).trim()
+                        def commitsSince = sh(script: "git rev-list ${latestTag}..HEAD --count", returnStdout: true).trim()
+                        
+                        def baseVersion = latestTag.replace("v", "")
+                        env.IMAGE_VERSION = "${baseVersion}+${commitsSince}.${env.GIT_COMMIT_SHORT}"
                         env.IS_RELEASE_BUILD = 'false'
-                        echo "Development Build from branch ${env.BRANCH_NAME}. Version: ${env.IMAGE_VERSION}"
                     }
+                    echo "Using version: ${env.IMAGE_VERSION}"
                 }
             }
         }
