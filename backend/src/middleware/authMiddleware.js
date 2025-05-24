@@ -24,6 +24,6 @@ const authenticateToken = (req, res, next) => {
         console.error("Error verifying JWT token:", error);
         return res.status(500).json({ message: 'Internal server error' });
     }
-}
+} 
 
 module.exports = authenticateToken;
