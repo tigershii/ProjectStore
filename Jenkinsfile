@@ -57,6 +57,25 @@ pipeline {
             }
         }
 
+        stage('Setup Tools') {
+            steps {
+                script {
+                    // Install gcloud CLI if not present
+                    sh '''
+                        if ! command -v gcloud &> /dev/null; then
+                            echo "Installing Google Cloud SDK..."
+                            curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
+                            tar -xzf google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
+                            ./google-cloud-sdk/install.sh --quiet
+                            export PATH=$PATH:$PWD/google-cloud-sdk/bin
+                            echo "export PATH=\$PATH:$PWD/google-cloud-sdk/bin" >> ~/.bashrc
+                        fi
+                        gcloud --version
+                    '''
+                }
+            }
+        }
+
         stage('Build & Push Backend') {
             when {
                 expression {
@@ -111,10 +130,8 @@ pipeline {
                     def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
                     withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
-                        withEnv(['GCLOUD_PATH=/var/jenkins_home/google-cloud-sdk/bin']) {
-                            sh "$GCLOUD_PATH/gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
-                            sh "$GCLOUD_PATH/gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
-                        }
+                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
+                        sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
                     docker.withRegistry("https://${env.GAR_LOCATION}-docker.pkg.dev", '') {
