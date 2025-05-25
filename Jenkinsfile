@@ -76,8 +76,8 @@ pipeline {
                     echo "Building Backend with version: ${imageVersion}"
                     def fullImageWithTag = "${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
-                    withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_SA_KEY_PATH')]) {
-                        sh "gcloud auth activate-service-account --key-file=${GCP_SA_KEY_PATH} --project=${env.GCP_PROJECT_ID}"
+                    withCredentials([googleServiceAccount(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} --project=${env.GCP_PROJECT_ID}"
                         sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
@@ -110,8 +110,8 @@ pipeline {
                     echo "Building Frontend with version: ${imageVersion}"
                     def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
-                    withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_SA_KEY_PATH')]) {
-                        sh "gcloud auth activate-service-account --key-file=${GCP_SA_KEY_PATH} --project=${env.GCP_PROJECT_ID}"
+                    withCredentials([googleServiceAccount(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} --project=${env.GCP_PROJECT_ID}"
                         sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
