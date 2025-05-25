@@ -2,13 +2,7 @@ def imageVersion = "0.0.0"
 def isReleaseBuild = false
 
 pipeline {
-    agent {
-        docker {
-            image 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
-
+    agent any
 
     environment {
         GCP_PROJECT_ID           = 'kubernetes-cluster-458203'
@@ -75,7 +69,7 @@ pipeline {
                         fi
                         python --version || python3 --version
                     '''
-                    
+
                     sh '''
                         if ! command -v gcloud &> /dev/null; then
                             echo "Installing Google Cloud SDK..."
