@@ -2,6 +2,13 @@ def imageVersion = "0.0.0"
 def isReleaseBuild = false
 
 pipeline {
+    agent {
+        docker {
+            image 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
 
     environment {
         GCP_PROJECT_ID           = 'kubernetes-cluster-458203'
@@ -41,31 +48,6 @@ pipeline {
             }
         }
 
-        stage('Setup Tools') {
-            steps {
-                script {
-                    // Use a pre-built Docker image to run gcloud commands
-                    sh '''
-                    # Create a wrapper script for gcloud
-                    cat > gcloud-wrapper.sh << 'EOF'
-#!/bin/bash
-docker run --rm -v "$(pwd)":/workspace -w /workspace gcr.io/google.com/cloudsdktool/cloud-sdk:alpine gcloud "$@"
-EOF
-                    chmod +x gcloud-wrapper.sh
-                    
-                    # Create a symbolic link to make it available as "gcloud"
-                    mkdir -p $HOME/bin
-                    ln -sf $(pwd)/gcloud-wrapper.sh $HOME/bin/gcloud
-                    export PATH=$HOME/bin:$PATH
-                    echo "export PATH=$HOME/bin:$PATH" >> $HOME/.bashrc
-                    
-                    # Test the wrapper
-                    gcloud --version
-                '''
-                }
-            }
-        }
-
         stage('Determine Version') {
             steps {
                 script {
@@ -76,6 +58,35 @@ EOF
                     env.IS_RELEASE_BUILD = isReleaseBuild.toString()
                     
                     echo "Using hardcoded version for testing: ${imageVersion}"
+                }
+            }
+        }
+
+        stage('Setup Tools') {
+            steps {
+                script {
+                    // Install gcloud CLI if not present
+                    sh '''
+                        if ! command -v python3 &> /dev/null; then
+                            echo "Installing Python..."
+                            apt-get update || true
+                            apt-get install -y python3 python3-pip || true
+                            ln -sf /usr/bin/python3 /usr/bin/python || true
+                        fi
+                        python --version || python3 --version
+                    '''
+                    
+                    sh '''
+                        if ! command -v gcloud &> /dev/null; then
+                            echo "Installing Google Cloud SDK..."
+                            curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
+                            tar -xzf google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
+                            ./google-cloud-sdk/install.sh --quiet
+                            export PATH=$PATH:$PWD/google-cloud-sdk/bin
+                            echo "export PATH=\$PATH:$PWD/google-cloud-sdk/bin" >> ~/.bashrc
+                        fi
+                        gcloud --version
+                    '''
                 }
             }
         }
