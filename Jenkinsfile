@@ -60,7 +60,16 @@ pipeline {
         stage('Build & Push Backend') {
             when {
                 expression {
-                    return hasBackendChanges()
+                    return env.IS_RELEASE_BUILD == 'true' || IS_RELEASE_BUILD || (
+                        currentBuild.changeSets.any { changeSet ->
+                            changeSet.items.any { item ->
+                                item.affectedPaths.any { path ->
+                                    path.startsWith('backend/')
+                                }
+                            }
+                        } && env.IS_RELEASE_BUILD == 'false'
+                    )
+                }
                 }
             }
             steps {
@@ -86,7 +95,7 @@ pipeline {
         stage('Build & Push Frontend') {
             when {
                 expression {
-                    return env.IS_RELEASE_BUILD == 'true' || (
+                    return env.IS_RELEASE_BUILD == 'true' || isReleaseBuild || (
                         currentBuild.changeSets.any { changeSet ->
                             changeSet.items.any { item ->
                                 item.affectedPaths.any { path ->
@@ -175,34 +184,6 @@ pipeline {
                 to: "${env.EMAIL_RECIPIENTS}",
                 attachLog: true
             )
-        }
-    }
-}
-
-def hasBackendChanges() {
-    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
-        return true
-    }
-    
-    return currentBuild.changeSets.any { changeSet ->
-        changeSet.items.any { item ->
-            item.affectedPaths.any { path ->
-                path.startsWith('backend/')
-            }
-        }
-    }
-}
-
-def hasFrontendChanges() {
-    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
-        return true
-    }
-    
-    return currentBuild.changeSets.any { changeSet ->
-        changeSet.items.any { item ->
-            item.affectedPaths.any { path ->
-                path.startsWith('frontend/')
-            }
         }
     }
 }
