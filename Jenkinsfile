@@ -1,4 +1,6 @@
-// Jenkinsfile
+def imageVersion = "0.0.0"
+def isReleaseBuild = false
+
 pipeline {
     agent any
 
@@ -44,61 +46,13 @@ pipeline {
         stage('Determine Version') {
             steps {
                 script {
-                    // try {
-                    //     if (env.TAG_NAME) {
-                    //         env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
-                    //         env.IS_RELEASE_BUILD = 'true'
-                    //         echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
-                    //     } else {
-                    //         def commitMessage = sh(script: 'git log -1 --pretty=%B || echo "No commit message"', returnStdout: true).trim()
-                    //         echo "Commit message: ${commitMessage}"
-                            
-                    //         def versionPrefix = "version:"
-                    //         def versionIdx = commitMessage.toLowerCase().indexOf(versionPrefix)
-                            
-                    //         if (versionIdx >= 0) {
-                    //             def afterPrefix = commitMessage.substring(versionIdx + versionPrefix.length()).trim()
-                    //             def endIdx = afterPrefix.indexOf(' ')
-                                
-                    //             if (endIdx < 0) {
-                    //                 endIdx = afterPrefix.length()
-                    //             }
-                                
-                    //             if (endIdx > 0) {
-                    //                 env.IMAGE_VERSION = afterPrefix.substring(0, endIdx).trim()
-                    //                 echo "Found version in commit message: ${env.IMAGE_VERSION}"
-                    //             } else {
-                    //                 env.IMAGE_VERSION = "0.1.0-dev.${env.BUILD_NUMBER}"
-                    //                 echo "Invalid version format in commit message, using default: ${env.IMAGE_VERSION}"
-                    //             }
-                                
-                    //             if (commitMessage.toLowerCase().contains("[release=true]") || 
-                    //                 commitMessage.toLowerCase().contains("[release:true]")) {
-                    //                 env.IS_RELEASE_BUILD = 'true'
-                    //                 echo "Release Build from commit message. Version: ${env.IMAGE_VERSION}"
-                    //             } else {
-                    //                 env.IS_RELEASE_BUILD = 'false'
-                    //                 echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
-                    //             }
-                    //         } else {
-                    //             sh(script: 'git fetch --tags || true')
-                    //             def latestTag = sh(script: 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"', returnStdout: true).trim()
-                                
-                    //             def baseVersion = latestTag.replace("v", "")
-                    //             env.IMAGE_VERSION = "${baseVersion}-dev.${env.BUILD_NUMBER}.${env.GIT_COMMIT_SHORT}"
-                    //             env.IS_RELEASE_BUILD = 'false'
-                    //             echo "Using generated version: ${env.IMAGE_VERSION}"
-                    //         }
-                    //     }
-                    // } catch (Exception e) {
-                    //     echo "Error in Determine Version stage: ${e.message}"
-                    //     env.IMAGE_VERSION = "0.0.0-error.${env.BUILD_NUMBER}"
-                    //     env.IS_RELEASE_BUILD = 'false'
-                    //     echo "Using fallback version due to error: ${env.IMAGE_VERSION}"
-                    // }
-                    env.setProperty('IMAGE_VERSION', "2.0.4")
-                    env.setProperty('IS_RELEASE_BUILD', 'true')
-                    echo "Using hardcoded version for testing: ${env.IMAGE_VERSION}"
+                    imageVersion = "2.0.4"
+                    isReleaseBuild = true
+                    
+                    env.IMAGE_VERSION = imageVersion
+                    env.IS_RELEASE_BUILD = isReleaseBuild.toString()
+                    
+                    echo "Using hardcoded version for testing: ${imageVersion}"
                 }
             }
         }
@@ -111,8 +65,8 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Building Backend with version: ${env.IMAGE_VERSION}"
-                    def fullImageWithTag = "${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${env.IMAGE_VERSION}"
+                    echo "Building Backend with version: ${imageVersion}"
+                    def fullImageWithTag = "${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
                     withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_SA_KEY_PATH')]) {
                         sh "gcloud auth activate-service-account --key-file=${GCP_SA_KEY_PATH} --project=${env.GCP_PROJECT_ID}"
@@ -145,8 +99,8 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Building Frontend with version: ${env.IMAGE_VERSION}"
-                    def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${env.IMAGE_VERSION}"
+                    echo "Building Frontend with version: ${imageVersion}"
+                    def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
                     withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_SA_KEY_PATH')]) {
                         sh "gcloud auth activate-service-account --key-file=${GCP_SA_KEY_PATH} --project=${env.GCP_PROJECT_ID}"
@@ -172,13 +126,13 @@ pipeline {
         success {
             echo 'Pipeline Succeeded!'
             emailext (
-                subject: "[${env.PROJECT_NAME}] SUCCESS: Build #${env.BUILD_NUMBER} - ${env.IMAGE_VERSION}",
+                subject: "[${env.PROJECT_NAME}] SUCCESS: Build #${env.BUILD_NUMBER} - ${imageVersion}",
                 body: """<html>
                     <body>
                         <h2>✅ Build Successful!</h2>
                         <p><b>Project:</b> ${env.PROJECT_NAME}</p>
                         <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
-                        <p><b>Version:</b> ${env.IMAGE_VERSION}</p>
+                        <p><b>Version:</b> ${imageVersion}</p>
                         <p><b>Branch/Tag:</b> ${env.TAG_NAME ?: env.BRANCH_NAME}</p>
                         <p><b>Changes:</b></p>
                         <ul>
@@ -190,8 +144,8 @@ pipeline {
                         </ul>
                         <p><b>Images built:</b></p>
                         <ul>
-                            ${env.BACKEND_BUILT == 'true' ? "<li>Backend: ${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${env.IMAGE_VERSION}</li>" : ""}
-                            ${env.FRONTEND_BUILT == 'true' ? "<li>Frontend: ${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${env.IMAGE_VERSION}</li>" : ""}
+                            ${env.BACKEND_BUILT == 'true' ? "<li>Backend: ${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}</li>" : ""}
+                            ${env.FRONTEND_BUILT == 'true' ? "<li>Frontend: ${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}</li>" : ""}
                         </ul>
                         <p><a href='${env.BUILD_URL}'>View Build Details</a></p>
                     </body>
@@ -204,13 +158,13 @@ pipeline {
         failure {
             echo 'Pipeline Failed!'
             emailext (
-                subject: "[${env.PROJECT_NAME}] FAILED: Build #${env.BUILD_NUMBER} - ${env.IMAGE_VERSION}",
+                subject: "[${env.PROJECT_NAME}] FAILED: Build #${env.BUILD_NUMBER} - ${imageVersion}",
                 body: """<html>
                     <body>
                         <h2>❌ Build Failed!</h2>
                         <p><b>Project:</b> ${env.PROJECT_NAME}</p>
                         <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
-                        <p><b>Version:</b> ${env.IMAGE_VERSION}</p>
+                        <p><b>Version:</b> ${imageVersion}</p>
                         <p><b>Branch/Tag:</b> ${env.TAG_NAME ?: env.BRANCH_NAME}</p>
                         <p><b>Error:</b> The build failed. Please check the attached log for details.</p>
                         <p><a href='${env.BUILD_URL}console'>View Console Output</a></p>
@@ -226,7 +180,7 @@ pipeline {
 }
 
 def hasBackendChanges() {
-    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
+    if (isReleaseBuild || currentBuild.changeSets.isEmpty()) {
         return true
     }
     
@@ -240,7 +194,7 @@ def hasBackendChanges() {
 }
 
 def hasFrontendChanges() {
-    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
+    if (isReleaseBuild || currentBuild.changeSets.isEmpty()) {
         return true
     }
     
