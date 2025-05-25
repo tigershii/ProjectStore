@@ -70,7 +70,6 @@ pipeline {
                         } && env.IS_RELEASE_BUILD == 'false'
                     )
                 }
-                }
             }
             steps {
                 script {
