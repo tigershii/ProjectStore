@@ -2,7 +2,12 @@ def imageVersion = "0.0.0"
 def isReleaseBuild = false
 
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
 
     environment {
@@ -53,25 +58,6 @@ pipeline {
                     env.IS_RELEASE_BUILD = isReleaseBuild.toString()
                     
                     echo "Using hardcoded version for testing: ${imageVersion}"
-                }
-            }
-        }
-
-        stage('Setup Tools') {
-            steps {
-                script {
-                    // Install gcloud CLI if not present
-                    sh '''
-                        if ! command -v gcloud &> /dev/null; then
-                            echo "Installing Google Cloud SDK..."
-                            curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
-                            tar -xzf google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
-                            ./google-cloud-sdk/install.sh --quiet
-                            export PATH=$PATH:$PWD/google-cloud-sdk/bin
-                            echo "export PATH=\$PATH:$PWD/google-cloud-sdk/bin" >> ~/.bashrc
-                        fi
-                        gcloud --version
-                    '''
                 }
             }
         }
