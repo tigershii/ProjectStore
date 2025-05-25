@@ -56,35 +56,6 @@ pipeline {
             }
         }
 
-        stage('Setup Tools') {
-            steps {
-                script {
-                    // Install gcloud CLI if not present
-                    sh '''
-                        if ! command -v python3 &> /dev/null; then
-                            echo "Installing Python..."
-                            apt-get update || true
-                            apt-get install -y python3 python3-pip || true
-                            ln -sf /usr/bin/python3 /usr/bin/python || true
-                        fi
-                        python --version || python3 --version
-                    '''
-
-                    sh '''
-                        if ! command -v gcloud &> /dev/null; then
-                            echo "Installing Google Cloud SDK..."
-                            curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
-                            tar -xzf google-cloud-sdk-404.0.0-linux-x86_64.tar.gz
-                            ./google-cloud-sdk/install.sh --quiet
-                            export PATH=$PATH:$PWD/google-cloud-sdk/bin
-                            echo "export PATH=\$PATH:$PWD/google-cloud-sdk/bin" >> ~/.bashrc
-                        fi
-                        gcloud --version
-                    '''
-                }
-            }
-        }
-
         stage('Build & Push Backend') {
             when {
                 expression {
