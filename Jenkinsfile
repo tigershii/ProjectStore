@@ -180,7 +180,7 @@ pipeline {
 }
 
 def hasBackendChanges() {
-    if (isReleaseBuild || currentBuild.changeSets.isEmpty()) {
+    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
         return true
     }
     
@@ -194,7 +194,7 @@ def hasBackendChanges() {
 }
 
 def hasFrontendChanges() {
-    if (isReleaseBuild || currentBuild.changeSets.isEmpty()) {
+    if (env.IS_RELEASE_BUILD == 'true' || currentBuild.changeSets.isEmpty()) {
         return true
     }
     
