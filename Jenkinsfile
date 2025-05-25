@@ -44,58 +44,61 @@ pipeline {
         stage('Determine Version') {
             steps {
                 script {
-                    try {
-                        if (env.TAG_NAME) {
-                            env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
-                            env.IS_RELEASE_BUILD = 'true'
-                            echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
-                        } else {
-                            def commitMessage = sh(script: 'git log -1 --pretty=%B || echo "No commit message"', returnStdout: true).trim()
-                            echo "Commit message: ${commitMessage}"
+                    // try {
+                    //     if (env.TAG_NAME) {
+                    //         env.IMAGE_VERSION = env.TAG_NAME.replace("v", "")
+                    //         env.IS_RELEASE_BUILD = 'true'
+                    //         echo "Release Build from Git Tag. Version: ${env.IMAGE_VERSION}"
+                    //     } else {
+                    //         def commitMessage = sh(script: 'git log -1 --pretty=%B || echo "No commit message"', returnStdout: true).trim()
+                    //         echo "Commit message: ${commitMessage}"
                             
-                            def versionPrefix = "version:"
-                            def versionIdx = commitMessage.toLowerCase().indexOf(versionPrefix)
+                    //         def versionPrefix = "version:"
+                    //         def versionIdx = commitMessage.toLowerCase().indexOf(versionPrefix)
                             
-                            if (versionIdx >= 0) {
-                                def afterPrefix = commitMessage.substring(versionIdx + versionPrefix.length()).trim()
-                                def endIdx = afterPrefix.indexOf(' ')
+                    //         if (versionIdx >= 0) {
+                    //             def afterPrefix = commitMessage.substring(versionIdx + versionPrefix.length()).trim()
+                    //             def endIdx = afterPrefix.indexOf(' ')
                                 
-                                if (endIdx < 0) {
-                                    endIdx = afterPrefix.length()
-                                }
+                    //             if (endIdx < 0) {
+                    //                 endIdx = afterPrefix.length()
+                    //             }
                                 
-                                if (endIdx > 0) {
-                                    env.IMAGE_VERSION = afterPrefix.substring(0, endIdx).trim()
-                                    echo "Found version in commit message: ${env.IMAGE_VERSION}"
-                                } else {
-                                    env.IMAGE_VERSION = "0.1.0-dev.${env.BUILD_NUMBER}"
-                                    echo "Invalid version format in commit message, using default: ${env.IMAGE_VERSION}"
-                                }
+                    //             if (endIdx > 0) {
+                    //                 env.IMAGE_VERSION = afterPrefix.substring(0, endIdx).trim()
+                    //                 echo "Found version in commit message: ${env.IMAGE_VERSION}"
+                    //             } else {
+                    //                 env.IMAGE_VERSION = "0.1.0-dev.${env.BUILD_NUMBER}"
+                    //                 echo "Invalid version format in commit message, using default: ${env.IMAGE_VERSION}"
+                    //             }
                                 
-                                if (commitMessage.toLowerCase().contains("[release=true]") || 
-                                    commitMessage.toLowerCase().contains("[release:true]")) {
-                                    env.IS_RELEASE_BUILD = 'true'
-                                    echo "Release Build from commit message. Version: ${env.IMAGE_VERSION}"
-                                } else {
-                                    env.IS_RELEASE_BUILD = 'false'
-                                    echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
-                                }
-                            } else {
-                                sh(script: 'git fetch --tags || true')
-                                def latestTag = sh(script: 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"', returnStdout: true).trim()
+                    //             if (commitMessage.toLowerCase().contains("[release=true]") || 
+                    //                 commitMessage.toLowerCase().contains("[release:true]")) {
+                    //                 env.IS_RELEASE_BUILD = 'true'
+                    //                 echo "Release Build from commit message. Version: ${env.IMAGE_VERSION}"
+                    //             } else {
+                    //                 env.IS_RELEASE_BUILD = 'false'
+                    //                 echo "Development Build with version from commit message: ${env.IMAGE_VERSION}"
+                    //             }
+                    //         } else {
+                    //             sh(script: 'git fetch --tags || true')
+                    //             def latestTag = sh(script: 'git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0"', returnStdout: true).trim()
                                 
-                                def baseVersion = latestTag.replace("v", "")
-                                env.IMAGE_VERSION = "${baseVersion}-dev.${env.BUILD_NUMBER}.${env.GIT_COMMIT_SHORT}"
-                                env.IS_RELEASE_BUILD = 'false'
-                                echo "Using generated version: ${env.IMAGE_VERSION}"
-                            }
-                        }
-                    } catch (Exception e) {
-                        echo "Error in Determine Version stage: ${e.message}"
-                        env.IMAGE_VERSION = "0.0.0-error.${env.BUILD_NUMBER}"
-                        env.IS_RELEASE_BUILD = 'false'
-                        echo "Using fallback version due to error: ${env.IMAGE_VERSION}"
-                    }
+                    //             def baseVersion = latestTag.replace("v", "")
+                    //             env.IMAGE_VERSION = "${baseVersion}-dev.${env.BUILD_NUMBER}.${env.GIT_COMMIT_SHORT}"
+                    //             env.IS_RELEASE_BUILD = 'false'
+                    //             echo "Using generated version: ${env.IMAGE_VERSION}"
+                    //         }
+                    //     }
+                    // } catch (Exception e) {
+                    //     echo "Error in Determine Version stage: ${e.message}"
+                    //     env.IMAGE_VERSION = "0.0.0-error.${env.BUILD_NUMBER}"
+                    //     env.IS_RELEASE_BUILD = 'false'
+                    //     echo "Using fallback version due to error: ${env.IMAGE_VERSION}"
+                    // }
+                    env.IMAGE_VERSION = "2.0.4"
+                    env.IS_RELEASE_BUILD = 'true'
+                    echo "Using hardcoded version for testing: ${env.IMAGE_VERSION}"
                 }
             }
         }
