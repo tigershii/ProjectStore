@@ -96,8 +96,8 @@ pipeline {
                     //     env.IS_RELEASE_BUILD = 'false'
                     //     echo "Using fallback version due to error: ${env.IMAGE_VERSION}"
                     // }
-                    env.IMAGE_VERSION = "2.0.4"
-                    env.IS_RELEASE_BUILD = 'true'
+                    env.setProperty('IMAGE_VERSION', "2.0.4")
+                    env.setProperty('IS_RELEASE_BUILD', 'true')
                     echo "Using hardcoded version for testing: ${env.IMAGE_VERSION}"
                 }
             }
