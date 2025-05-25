@@ -111,8 +111,10 @@ pipeline {
                     def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
                     withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
-                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
-                        sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
+                        withEnv(['GCLOUD_PATH=/var/jenkins_home/google-cloud-sdk/bin']) {
+                            sh "$GCLOUD_PATH/gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
+                            sh "$GCLOUD_PATH/gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
+                        }
                     }
 
                     docker.withRegistry("https://${env.GAR_LOCATION}-docker.pkg.dev", '') {
