@@ -11,7 +11,7 @@ pipeline {
         GAR_REPOSITORY_NAME      = 'project-store' 
         BACKEND_IMAGE_NAME       = 'backend'
         FRONTEND_IMAGE_NAME      = 'frontend'
-        GCP_CREDENTIALS_ID       = 'gcp-artifact-registry-writer'
+        GCP_CREDENTIALS_ID       = 'gcp-key'
         
         BACKEND_IMAGE_FULL_NAME_NO_TAG  = "${env.GAR_LOCATION}-docker.pkg.dev/${env.GCP_PROJECT_ID}/${env.GAR_REPOSITORY_NAME}/${env.BACKEND_IMAGE_NAME}"
         FRONTEND_IMAGE_FULL_NAME_NO_TAG = "${env.GAR_LOCATION}-docker.pkg.dev/${env.GCP_PROJECT_ID}/${env.GAR_REPOSITORY_NAME}/${env.FRONTEND_IMAGE_NAME}"
@@ -76,8 +76,8 @@ pipeline {
                     echo "Building Backend with version: ${imageVersion}"
                     def fullImageWithTag = "${env.BACKEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
-                    withCredentials([googleServiceAccount(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                        sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} --project=${env.GCP_PROJECT_ID}"
+                    withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
+                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
                         sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
@@ -110,8 +110,8 @@ pipeline {
                     echo "Building Frontend with version: ${imageVersion}"
                     def fullImageWithTag = "${env.FRONTEND_IMAGE_FULL_NAME_NO_TAG}:${imageVersion}"
 
-                    withCredentials([googleServiceAccount(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                        sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} --project=${env.GCP_PROJECT_ID}"
+                    withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
+                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
                         sh "gcloud auth configure-docker ${env.GAR_LOCATION}-docker.pkg.dev --quiet"
                     }
 
