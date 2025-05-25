@@ -2,13 +2,6 @@ def imageVersion = "0.0.0"
 def isReleaseBuild = false
 
 pipeline {
-    agent {
-        docker {
-            image 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
-
 
     environment {
         GCP_PROJECT_ID           = 'kubernetes-cluster-458203'
@@ -44,6 +37,31 @@ pipeline {
                 script {
                     env.GIT_COMMIT_SHORT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                     echo "Checked out branch: ${env.BRANCH_NAME}, Commit: ${env.GIT_COMMIT_SHORT}"
+                }
+            }
+        }
+
+        stage('Setup Tools') {
+            steps {
+                script {
+                    // Use a pre-built Docker image to run gcloud commands
+                    sh '''
+                    # Create a wrapper script for gcloud
+                    cat > gcloud-wrapper.sh << 'EOF'
+#!/bin/bash
+docker run --rm -v "$(pwd)":/workspace -w /workspace gcr.io/google.com/cloudsdktool/cloud-sdk:alpine gcloud "$@"
+EOF
+                    chmod +x gcloud-wrapper.sh
+                    
+                    # Create a symbolic link to make it available as "gcloud"
+                    mkdir -p $HOME/bin
+                    ln -sf $(pwd)/gcloud-wrapper.sh $HOME/bin/gcloud
+                    export PATH=$HOME/bin:$PATH
+                    echo "export PATH=$HOME/bin:$PATH" >> $HOME/.bashrc
+                    
+                    # Test the wrapper
+                    gcloud --version
+                '''
                 }
             }
         }
