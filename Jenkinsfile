@@ -45,13 +45,25 @@ pipeline {
         stage('Determine Version') {
             steps {
                 script {
-                    imageVersion = "2.0.4"
-                    isReleaseBuild = true
-                    
-                    env.IMAGE_VERSION = imageVersion
-                    env.IS_RELEASE_BUILD = isReleaseBuild.toString()
-                    
-                    echo "Using hardcoded version for testing: ${imageVersion}"
+                    withCredentials([file(credentialsId: env.GCP_CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
+                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE} --project=${env.GCP_PROJECT_ID}"
+                        
+                        def latestVersionCmd = """
+                            gcloud artifacts docker tags list ${env.GAR_LOCATION}-docker.pkg.dev/${env.GCP_PROJECT_ID}/${env.GAR_REPOSITORY_NAME}/${env.BACKEND_IMAGE_NAME} \
+                            --sort-by=~create_time --limit=1 --format='value(tag)' | grep -E '^[0-9]+\\.[0-9]+\\.[0-9]+$' || echo '0.1.0'
+                        """
+                        
+                        def latestVersion = sh(script: latestVersionCmd, returnStdout: true).trim()
+                        echo "Latest version found: ${latestVersion}"
+                        
+                        def versionParts = latestVersion.tokenize('.')
+                        def major = versionParts[0].toInteger()
+                        def minor = versionParts[1].toInteger()
+                        def patch = versionParts[2].toInteger() + 1 
+                        
+                        imageVersion = "${major}.${minor}.${patch}"
+                        echo "Incremented to new version: ${imageVersion}"
+                    }
                 }
             }
         }
